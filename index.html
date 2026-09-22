@@ -62,7 +62,7 @@ button{touch-action:manipulation} .app{min-height:100vh;display:grid;grid-templa
     <select id="addCategory" class="add-field"><option value="行銷">行銷</option><option value="研究">研究</option><option value="老師">老師</option><option value="假日">假日</option><option value="備註">備註</option></select>
     <button class="btn primary" id="addEventBtn" style="height:38px">＋　新增活動</button>
   </div></div>
-  <div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportIcsBtn" title="下載後至 Google 日曆「設定」→「匯入及匯出」→「匯入」選擇此檔案">⭳　匯出至 Google 日曆</button><button class="nav-btn" id="resetBtn">↺　還原原始排程</button></div>
+  <div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportDataBtn" title="把目前瀏覽器裡的完整排程（含新增/刪除/拖曳調整）存成備份檔">⭳　匯出目前排程</button><button class="nav-btn" id="importDataBtn" title="選擇之前匯出的備份檔，匯入後會取代目前顯示的排程">⭱　匯入排程備份</button><input type="file" id="importFileInput" accept="application/json,.json" style="display:none" /><button class="nav-btn" id="exportIcsBtn" title="下載後至 Google 日曆「設定」→「匯入及匯出」→「匯入」選擇此檔案">⭳　匯出至 Google 日曆</button><button class="nav-btn" id="resetBtn">↺　還原原始排程</button></div>
 </aside>
 <main class="main"><div class="container">
   <div class="topbar"><div class="headline"><div class="eyebrow">Course project timeline</div><h2 id="viewTitle">金魚腦 Vlog｜行事曆</h2></div><div class="actions"><button class="btn icon" id="prevBtn" aria-label="上個月">←</button><button class="btn" id="todayBtn">今天</button><button class="btn icon" id="nextBtn" aria-label="下個月">→</button><button class="btn primary" id="toggleBtn">切換清單</button></div></div>
@@ -167,6 +167,52 @@ async function copyICSFallback(){
     await customAlert('自動下載與複製都失敗了，請截圖告訴我，我再想別的辦法。');
   }
 }
+function buildBackupJSON(){return JSON.stringify({exportedAt:new Date().toISOString(),source:'專案時程',events},null,2)}
+async function exportDataBackup(){
+  const data=buildBackupJSON();
+  if(typeof window.claude?.use==='function'){
+    let downloads=null; try{ downloads=await window.claude.use('downloads') }catch(e){ downloads=null }
+    if(downloads){
+      try{
+        await downloads.save({filename:'schedule-backup.json', data});
+        toast('已匯出目前排程（'+events.length+' 筆）');
+        return;
+      }catch(err){ /* 平台下載失敗，往下改用瀏覽器直接下載 */ }
+    }
+  }
+  try{
+    const blob=new Blob([data],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='schedule-backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    toast('已下載 schedule-backup.json（'+events.length+' 筆）');
+  }catch(err){
+    await customAlert('匯出失敗，請截圖告訴我，我再想別的辦法。');
+  }
+}
+function importDataBackup(file){
+  const reader=new FileReader();
+  reader.onload=async ()=>{
+    let list;
+    try{
+      const parsed=JSON.parse(reader.result);
+      list=Array.isArray(parsed)?parsed:parsed.events;
+      if(!Array.isArray(list)||!list.length) throw new Error('empty');
+      const valid=list.every(e=>e&&typeof e.id==='string'&&typeof e.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&typeof e.title==='string'&&typeof e.category==='string');
+      if(!valid) throw new Error('format');
+    }catch(err){
+      await customAlert('這個檔案格式看起來不對，請確認是從「匯出目前排程」下載的備份檔（JSON）。');
+      return;
+    }
+    if(!(await customConfirm('要匯入這份排程嗎？目前畫面上顯示的排程會被取代（共 '+list.length+' 筆）。'))) return;
+    events=list.map(e=>({id:e.id,date:e.date,title:e.title,category:e.category,week:e.week||sourceWeekForDate(e.date),originalDate:e.originalDate||e.date}));
+    saveEvents();renderAll();
+    toast('已匯入排程（'+events.length+' 筆）');
+  };
+  reader.onerror=async ()=>{ await customAlert('讀取檔案失敗，請重試一次。'); };
+  reader.readAsText(file);
+}
 function isoWeekYear(dateStr){const d=new Date(dateStr+'T00:00:00');const day=(d.getDay()+6)%7;const thursday=new Date(d);thursday.setDate(d.getDate()-day+3);return thursday.getFullYear()}
 function addEvent(){
   const dateEl=document.getElementById('addDate'),titleEl=document.getElementById('addTitle'),catEl=document.getElementById('addCategory');
@@ -254,6 +300,13 @@ document.getElementById('toggleBtn').addEventListener('click',()=>setView(curren
 document.getElementById('mobileViewBtn').addEventListener('click',()=>setView(currentView==='calendar'?'list':'calendar'));
 document.getElementById('resetBtn').addEventListener('click',resetEvents);
 document.getElementById('exportIcsBtn').addEventListener('click',exportToGoogleCalendar);
+document.getElementById('exportDataBtn').addEventListener('click',exportDataBackup);
+document.getElementById('importDataBtn').addEventListener('click',()=>document.getElementById('importFileInput').click());
+document.getElementById('importFileInput').addEventListener('change',e=>{
+  const file=e.target.files[0];
+  if(file) importDataBackup(file);
+  e.target.value='';
+});
 document.getElementById('addEventBtn').addEventListener('click',addEvent);
 document.addEventListener('click',e=>{const delBtn=e.target.closest('.evt-del');if(delBtn){e.stopPropagation();deleteEvent(delBtn.dataset.id)}});
 document.addEventListener('click',e=>{
