@@ -47,6 +47,14 @@ button{touch-action:manipulation} .app{min-height:100vh;display:grid;grid-templa
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .supabase-box{display:flex;flex-direction:column;gap:8px;padding:0 0 2px}.supabase-hint{font-size:12px;color:var(--neutral);line-height:1.45;padding:0 2px}.status-line{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border)}.status-line[data-state="ok"]{border-color:rgba(22,163,74,.35);color:#166534;background:#F0FDF4}.status-line[data-state="warn"]{border-color:rgba(217,119,6,.35);color:#92400E;background:#FFFBEB}.status-line[data-state="error"]{border-color:rgba(220,38,38,.35);color:#991B1B;background:#FEF2F2}.mini-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn.small{height:34px;padding:0 10px;font-size:13px}.btn.block{width:100%}
 
+
+.is-hidden{display:none!important}
+body.readonly .edit-only{display:none!important}
+body.readonly .evt-del{display:none!important}
+body.readonly .event,body.readonly .list-card{cursor:default}
+body.readonly .event:hover{transform:none}
+body.readonly .panel-head .muted:last-child::after{content:"；目前為唯讀模式，登入後可新增、拖曳與刪除"}
+.default-config{display:none!important}
 @media(max-width:900px){:root{--sidebar:220px} .main{padding:24px 20px 48px} .headline h2{font-size:36px} .toolbar{grid-template-columns:1fr} .chips{justify-content:flex-start}}
 @media(max-width:720px){.app{display:block} .sidebar{display:none} .mobile-head{display:flex;position:sticky;top:0;z-index:50;padding:12px 16px;background:rgba(250,250,249,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);align-items:center;justify-content:space-between} .mobile-title{font-family:"Playfair Display",serif;font-weight:600;font-size:18px} .main{padding:20px 14px 40px} .topbar{display:block} .actions{margin-top:16px;justify-content:flex-start} .headline h2{font-size:32px} .panel{border-radius:12px} .date-row{grid-template-columns:78px 1fr} .list-card{min-width:100%;max-width:none} .calendar{min-width:690px} .day{min-height:138px}}
 @media(prefers-color-scheme:dark){body[data-theme="auto"]{--bg:#1C1917;--surface:#292524;--raised:#44403C;--text:#FAFAF9;--text2:#D6D3D1;--neutral:#A8A29E;--border:#44403C} body[data-theme="auto"] .sidebar,body[data-theme="auto"] .mobile-head{background:rgba(28,25,23,.94)} body[data-theme="auto"] .nav-btn.active{background:#3A2118} body[data-theme="auto"] .day.out{background:#211E1C} body[data-theme="auto"] .event[data-cat="假日"]{background:#3A1F1D} body[data-theme="auto"] .note-band{background:#382A14;color:#FCD34D;border-color:#5B4523}}
@@ -59,25 +67,26 @@ button{touch-action:manipulation} .app{min-height:100vh;display:grid;grid-templa
   <div class="brand"><div class="eyebrow">Ember Studio</div><h1>專案時程</h1></div>
   <div class="nav-section"><div class="nav-label">檢視</div><button class="nav-btn active" data-view="calendar">▦　行事曆</button><button class="nav-btn" data-view="list">☷　清單</button></div>
   <div class="nav-section"><div class="nav-label">分類</div><div class="legend"><div class="legend-row"><span class="dot" style="background:#C2410C"></span>行銷</div><div class="legend-row"><span class="dot" style="background:#A16207"></span>研究</div><div class="legend-row"><span class="dot" style="background:#7C3AED"></span>老師</div><div class="legend-row"><span class="dot" style="background:#DC2626"></span>假日</div><div class="legend-row"><span class="dot" style="background:#F59E0B"></span>備註</div></div></div>
-  <div class="nav-section"><div class="nav-label">新增活動</div><div style="display:flex;flex-direction:column;gap:8px">
+  <div class="nav-section edit-only" id="addSection"><div class="nav-label">新增活動</div><div style="display:flex;flex-direction:column;gap:8px">
     <input type="date" id="addDate" class="add-field" />
     <input type="text" id="addTitle" class="add-field" placeholder="任務標題" />
     <select id="addCategory" class="add-field"><option value="行銷">行銷</option><option value="研究">研究</option><option value="老師">老師</option><option value="假日">假日</option><option value="備註">備註</option></select>
     <button class="btn primary" id="addEventBtn" style="height:38px">＋　新增活動</button>
   </div></div>
 
-  <div class="nav-section"><div class="nav-label">Supabase 同步</div><div class="supabase-box">
-    <input type="url" id="sbUrl" class="add-field" placeholder="Supabase Project URL" autocomplete="off" />
-    <input type="password" id="sbKey" class="add-field" placeholder="Publishable key / anon key" autocomplete="off" />
-    <input type="text" id="sbProjectId" class="add-field" placeholder="project id：kingfish-vlog" value="kingfish-vlog" />
-    <div class="mini-btns"><button class="btn small" id="connectSupabaseBtn">連線</button><button class="btn small" id="signOutBtn">登出</button></div>
+  <div class="nav-section" id="supabaseSection"><div class="nav-label">Supabase 同步</div><div class="supabase-box">
+    <input type="url" id="sbUrl" class="add-field default-config" placeholder="Supabase Project URL" autocomplete="off" />
+    <input type="password" id="sbKey" class="add-field default-config" placeholder="Publishable key / anon key" autocomplete="off" />
+    <input type="text" id="sbProjectId" class="add-field default-config" placeholder="project id：kingfish-vlog" value="kingfish-vlog" />
+    <input type="url" id="sbRedirectUrl" class="add-field default-config" placeholder="登入回跳網址（建議填 GitHub Pages 或 localhost，可留空）" autocomplete="off" />
+    <div class="mini-btns default-config"><button class="btn small" id="connectSupabaseBtn">連線</button><button class="btn small" id="signOutBtn">登出</button></div>
     <input type="email" id="loginEmail" class="add-field" placeholder="登入 Email" autocomplete="email" />
     <button class="btn primary block" id="loginBtn" style="height:36px">寄登入連結</button>
-    <button class="btn block" id="uploadRemoteBtn" style="height:36px">上傳目前排程</button>
+    <button class="btn block default-config" id="uploadRemoteBtn" style="height:36px">上傳目前排程</button>
     <div class="status-line" id="syncStatus" data-state="warn">本機模式：尚未連線 Supabase</div>
-    <div class="supabase-hint">第一次設定：先貼 URL / key，寄登入連結，登入後再按「上傳目前排程」。</div>
+    <div class="supabase-hint">未登入也會顯示 Supabase 最新內容；登入後可進入編輯模式。</div>
   </div></div>
-  <div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportDataBtn" title="把目前瀏覽器裡的完整排程（含新增/刪除/拖曳調整）存成備份檔">⭳　匯出目前排程</button><button class="nav-btn" id="importDataBtn" title="選擇之前匯出的備份檔，匯入後會取代目前顯示的排程">⭱　匯入排程備份</button><input type="file" id="importFileInput" accept="application/json,.json" style="display:none" /><button class="nav-btn" id="exportIcsBtn" title="下載後至 Google 日曆「設定」→「匯入及匯出」→「匯入」選擇此檔案">⭳　匯出至 Google 日曆</button><button class="nav-btn" id="resetBtn">↺　還原原始排程</button></div>
+  <div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportDataBtn" title="把目前瀏覽器裡的完整排程（含新增/刪除/拖曳調整）存成備份檔">⭳　匯出目前排程</button><button class="nav-btn edit-only" id="importDataBtn" title="選擇之前匯出的備份檔，匯入後會取代目前顯示的排程">⭱　匯入排程備份</button><input type="file" id="importFileInput" accept="application/json,.json" style="display:none" /><button class="nav-btn" id="exportIcsBtn" title="下載後至 Google 日曆「設定」→「匯入及匯出」→「匯入」選擇此檔案">⭳　匯出至 Google 日曆</button><button class="nav-btn edit-only" id="resetBtn">↺　還原原始排程</button><button class="nav-btn edit-only" id="exitEditBtn">⎋　登出編輯模式</button></div>
 </aside>
 <main class="main"><div class="container">
   <div class="topbar"><div class="headline"><div class="eyebrow">Course project timeline</div><h2 id="viewTitle">金魚腦 Vlog｜行事曆</h2></div><div class="actions"><button class="btn icon" id="prevBtn" aria-label="上個月">←</button><button class="btn" id="todayBtn">今天</button><button class="btn icon" id="nextBtn" aria-label="下個月">→</button><button class="btn primary" id="toggleBtn">切換清單</button></div></div>
@@ -87,7 +96,7 @@ button{touch-action:manipulation} .app{min-height:100vh;display:grid;grid-templa
     <div class="view active" id="calendarView"><div class="calendar-wrap"><div class="calendar"><div class="cal-weekdays"><div class="weekday">Sun.</div><div class="weekday">Mon.</div><div class="weekday">Tue.</div><div class="weekday">Wed.</div><div class="weekday">Thu.</div><div class="weekday">Fri.</div><div class="weekday">Sat.</div></div><div class="cal-grid" id="calGrid"></div></div></div></div>
     <div class="view" id="listView"><div class="list-view" id="listRoot"></div></div>
   </section>
-  <div class="sheet-note">來源：Google 試算表分頁「04 時程表N」（gid=1043600327）。已支援 Supabase 雲端同步；未連線或未登入時會使用目前瀏覽器的本機備份。</div>
+  <div class="sheet-note">來源：Google 試算表分頁「04 時程表N」（gid=1043600327）。已支援 Supabase 雲端同步；未登入時為唯讀，登入後可新增、拖曳、刪除。</div>
 </div></main>
 </div>
 <script>
@@ -96,8 +105,8 @@ const WEEK_SUMMARIES=[{"week": "W39", "start": "2026-09-21", "end": "2026-09-25"
 const SOURCE_NOTES=[{"id": "n1", "week": "W39", "date": "2026-09-23", "text": "9/23 預留蔡松彥影音需求調整", "start": "2026-09-21", "end": "2026-09-25"}, {"id": "n2", "week": "W42", "date": null, "text": "蔡松彥再行銷預熱周！", "start": "2026-10-12", "end": "2026-10-16"}, {"id": "n3", "week": "W43", "date": null, "text": "蔡松彥再行銷開賣周！", "start": "2026-10-19", "end": "2026-10-23"}];
 const STORAGE_KEY='ember-project-schedule-v1';
 const SUPABASE_CONFIG_KEY='ember-project-schedule-supabase-v1';
-const DEFAULT_SUPABASE_CONFIG={url:'',key:'',projectId:'kingfish-vlog'};
-let events=loadEvents();
+const DEFAULT_SUPABASE_CONFIG={url:'https://tqpyhgsmliwwxxbrctdk.supabase.co',key:'sb_publishable_XNZQrshFUCpcRmZHqwV0_Q_wfznQHde',projectId:'kingfish-vlog',redirectUrl:''};
+let events=[];
 let currentView='calendar';
 let filter='全部';
 let query='';
@@ -112,25 +121,31 @@ const minDate='2026-09-21', maxDate='2027-01-29';
 let cursor=new Date('2026-09-01T00:00:00');
 function loadEvents(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw) return JSON.parse(raw)}catch(e){} return structuredClone(INITIAL_EVENTS)}
 function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events))}
-function loadSupabaseConfig(){try{return {...DEFAULT_SUPABASE_CONFIG,...JSON.parse(localStorage.getItem(SUPABASE_CONFIG_KEY)||'{}')}}catch(e){return {...DEFAULT_SUPABASE_CONFIG}}}
+function loadSupabaseConfig(){try{const saved=JSON.parse(localStorage.getItem(SUPABASE_CONFIG_KEY)||'{}');return {url:saved.url||DEFAULT_SUPABASE_CONFIG.url,key:saved.key||DEFAULT_SUPABASE_CONFIG.key,projectId:saved.projectId||DEFAULT_SUPABASE_CONFIG.projectId,redirectUrl:saved.redirectUrl||DEFAULT_SUPABASE_CONFIG.redirectUrl}}catch(e){return {...DEFAULT_SUPABASE_CONFIG}}}
 function saveSupabaseConfig(){localStorage.setItem(SUPABASE_CONFIG_KEY,JSON.stringify(supabaseConfig))}
 function hasSupabaseConfig(){return Boolean(supabaseConfig.url&&supabaseConfig.key&&supabaseConfig.projectId)}
+function remoteCanRead(){return Boolean(supabaseClient&&supabaseConfig.projectId)}
 function remoteCanWrite(){return Boolean(supabaseClient&&currentUser&&supabaseConfig.projectId)}
 function setSyncStatus(message,state='warn'){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=message;el.dataset.state=state}
-function hydrateSupabaseFields(){const url=document.getElementById('sbUrl'),key=document.getElementById('sbKey'),projectId=document.getElementById('sbProjectId');if(url)url.value=supabaseConfig.url||'';if(key)key.value=supabaseConfig.key||'';if(projectId)projectId.value=supabaseConfig.projectId||DEFAULT_SUPABASE_CONFIG.projectId}
-function readSupabaseFields(){supabaseConfig={url:document.getElementById('sbUrl')?.value.trim()||'',key:document.getElementById('sbKey')?.value.trim()||'',projectId:document.getElementById('sbProjectId')?.value.trim()||DEFAULT_SUPABASE_CONFIG.projectId};saveSupabaseConfig();return hasSupabaseConfig()}
-function initSupabaseClient(){if(!hasSupabaseConfig())return false;if(!window.supabase?.createClient){setSyncStatus('找不到 supabase-js，請確認網路或 CDN 是否被擋。','error');return false}supabaseClient=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});if(authSubscription?.unsubscribe)authSubscription.unsubscribe();const sub=supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentUser=session?.user||null;updateAuthStateLabel();if(currentUser&&remoteReady){await loadRemoteEvents({keepLocalWhenEmpty:true,quiet:true});subscribeToRemoteChanges()}});authSubscription=sub?.data?.subscription||null;return true}
-function updateAuthStateLabel(){const email=currentUser?.email;const state=email?'ok':'warn';setSyncStatus(email?'Supabase 已登入：'+email:'已連線 Supabase，請先登入 Email。',state)}
+function hydrateSupabaseFields(){const url=document.getElementById('sbUrl'),key=document.getElementById('sbKey'),projectId=document.getElementById('sbProjectId'),redirectUrl=document.getElementById('sbRedirectUrl');if(url)url.value=supabaseConfig.url||DEFAULT_SUPABASE_CONFIG.url;if(key)key.value=supabaseConfig.key||DEFAULT_SUPABASE_CONFIG.key;if(projectId)projectId.value=supabaseConfig.projectId||DEFAULT_SUPABASE_CONFIG.projectId;if(redirectUrl)redirectUrl.value=supabaseConfig.redirectUrl||''}
+function readSupabaseFields(){supabaseConfig={url:document.getElementById('sbUrl')?.value.trim()||DEFAULT_SUPABASE_CONFIG.url,key:document.getElementById('sbKey')?.value.trim()||DEFAULT_SUPABASE_CONFIG.key,projectId:document.getElementById('sbProjectId')?.value.trim()||DEFAULT_SUPABASE_CONFIG.projectId,redirectUrl:document.getElementById('sbRedirectUrl')?.value.trim()||''};saveSupabaseConfig();return hasSupabaseConfig()}
+function updateEditModeUI(){const canWrite=remoteCanWrite();document.body.classList.toggle('readonly',!canWrite);document.getElementById('supabaseSection')?.classList.toggle('is-hidden',Boolean(currentUser));document.getElementById('addSection')?.classList.toggle('is-hidden',!canWrite);document.getElementById('exitEditBtn')?.classList.toggle('is-hidden',!currentUser)}
+function initSupabaseClient(){if(!hasSupabaseConfig())return false;if(!window.supabase?.createClient){setSyncStatus('找不到 supabase-js，請確認網路或 CDN 是否被擋。','error');return false}supabaseClient=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});if(authSubscription?.unsubscribe)authSubscription.unsubscribe();const sub=supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentUser=session?.user||null;updateAuthStateLabel();updateEditModeUI();if(remoteReady){await loadRemoteEvents({quiet:true});subscribeToRemoteChanges()}});authSubscription=sub?.data?.subscription||null;return true}
+function updateAuthStateLabel(){const email=currentUser?.email;const state=email?'ok':'ok';setSyncStatus(email?'Supabase 已登入：'+email:'Supabase 已連線：目前為唯讀模式。登入後可編輯。',state);updateEditModeUI()}
 function toDbEvent(e,index=0){return {id:String(e.id),project_id:supabaseConfig.projectId,date:e.date,title:e.title,category:e.category,week:e.week||sourceWeekForDate(e.date),original_date:e.originalDate||e.original_date||e.date,sort_order:Number.isFinite(e.sortOrder)?e.sortOrder:index,created_by:currentUser?.id||null,updated_at:new Date().toISOString()}}
 function fromDbEvent(row){return {id:row.id,date:row.date,title:row.title,category:row.category,week:row.week||sourceWeekForDate(row.date),originalDate:row.original_date||row.date,sortOrder:row.sort_order??0}}
 function remoteErrorText(error){return error?.message||'未知錯誤'}
-async function connectSupabase(showToast=true){if(!readSupabaseFields()){setSyncStatus('請先填 Supabase URL、publishable key 與 project id。','warn');return false}if(!initSupabaseClient())return false;const {data,error}=await supabaseClient.auth.getSession();if(error){setSyncStatus('Supabase Auth 讀取失敗：'+remoteErrorText(error),'error');return false}currentUser=data?.session?.user||null;remoteReady=true;updateAuthStateLabel();if(!currentUser){if(showToast)toast('請先寄登入連結並完成登入');return true}await loadRemoteEvents({keepLocalWhenEmpty:true});subscribeToRemoteChanges();if(showToast)toast('已連線 Supabase');return true}
-async function sendMagicLink(){if(!readSupabaseFields()){setSyncStatus('請先填 Supabase URL、publishable key 與 project id。','warn');return}if(!supabaseClient&&!initSupabaseClient())return;const email=document.getElementById('loginEmail')?.value.trim();if(!email){toast('請輸入登入 Email');return}const redirectTo=window.location.href.split('#')[0];const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}});if(error){setSyncStatus('登入信寄送失敗：'+remoteErrorText(error),'error');return}await customAlert('已寄出登入連結。\n\n請到信箱點擊連結；若部署到 GitHub Pages，記得先把該網址加入 Supabase Auth 的 Redirect URLs。')}
-async function signOutSupabase(){if(!supabaseClient)return;await supabaseClient.auth.signOut();currentUser=null;remoteReady=false;if(scheduleChannel){await supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}setSyncStatus('已登出，現在使用本機模式。','warn');toast('已登出')}
-async function loadRemoteEvents(opts={}){if(!remoteCanWrite())return false;const localCopy=events.length?structuredClone(events):structuredClone(INITIAL_EVENTS);const {data,error}=await supabaseClient.from('schedule_events').select('id,project_id,date,title,category,week,original_date,sort_order').eq('project_id',supabaseConfig.projectId).order('date',{ascending:true}).order('sort_order',{ascending:true});if(error){setSyncStatus('讀取 Supabase 失敗：'+remoteErrorText(error),'error');return false}if(data?.length){events=data.map(fromDbEvent);saveEvents();renderAll();setSyncStatus('Supabase 同步中：'+(currentUser.email||'已登入'),'ok');return true}events=opts.keepLocalWhenEmpty?localCopy:[];saveEvents();renderAll();if(!opts.quiet)setSyncStatus('Supabase 尚無排程，已先顯示本機資料；可按「上傳目前排程」。','warn');return true}
+function cleanAuthRedirectUrl(){try{const url=new URL(window.location.href);['code','error','error_code','error_description'].forEach(k=>url.searchParams.delete(k));url.hash='';window.history.replaceState({},document.title,url.toString())}catch(e){}}
+function getAuthRedirectError(){const hashParams=new URLSearchParams((window.location.hash||'').replace(/^#/,''));const searchParams=new URLSearchParams(window.location.search||'');const code=hashParams.get('error_code')||searchParams.get('error_code')||hashParams.get('error')||searchParams.get('error');const desc=hashParams.get('error_description')||searchParams.get('error_description');return code?decodeURIComponent((desc||code).replace(/\+/g,' ')):''}
+function getCleanCurrentUrl(){try{const url=new URL(window.location.href);['code','error','error_code','error_description'].forEach(k=>url.searchParams.delete(k));url.hash='';return url.toString()}catch(e){return window.location.href.split('#')[0]}}
+async function handleAuthRedirect(){const redirectError=getAuthRedirectError();if(redirectError){setSyncStatus('登入回跳失敗：'+redirectError,'error');cleanAuthRedirectUrl();return false}const code=new URLSearchParams(window.location.search||'').get('code');if(code&&supabaseClient?.auth?.exchangeCodeForSession){const {data,error}=await supabaseClient.auth.exchangeCodeForSession(code);if(error){setSyncStatus('登入驗證失敗：'+remoteErrorText(error),'error');return false}currentUser=data?.session?.user||null;cleanAuthRedirectUrl();return true}return true}
+async function connectSupabase(showToast=true){if(!readSupabaseFields()){setSyncStatus('Supabase 設定不完整，無法讀取雲端資料。','error');events=[];renderAll();return false}if(!initSupabaseClient())return false;const handled=await handleAuthRedirect();if(!handled)return false;await new Promise(resolve=>setTimeout(resolve,80));const {data,error}=await supabaseClient.auth.getSession();if(error){setSyncStatus('Supabase Auth 讀取失敗：'+remoteErrorText(error),'error');return false}currentUser=data?.session?.user||null;remoteReady=true;updateAuthStateLabel();cleanAuthRedirectUrl();await loadRemoteEvents({quiet:true});subscribeToRemoteChanges();if(showToast)toast(currentUser?'已進入編輯模式':'已讀取 Supabase，目前為唯讀模式');return true}
+async function sendMagicLink(){if(!readSupabaseFields()){setSyncStatus('請先填 Supabase URL、publishable key 與 project id。','warn');return}if(!supabaseClient&&!initSupabaseClient())return;const email=document.getElementById('loginEmail')?.value.trim();if(!email){toast('請輸入登入 Email');return}const redirectTo=supabaseConfig.redirectUrl||getCleanCurrentUrl();const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo,shouldCreateUser:true}});if(error){setSyncStatus('登入信寄送失敗：'+remoteErrorText(error),'error');return}await customAlert('已寄出登入連結。\n\n回跳網址：'+redirectTo+'\n\n請確認這個網址有加入 Supabase Auth 的 Redirect URLs；若目前是 file:// 或 ChatGPT sandbox，請改用 GitHub Pages 或 localhost。')}
+async function signOutSupabase(){if(!supabaseClient)return;await supabaseClient.auth.signOut();currentUser=null;remoteReady=false;if(scheduleChannel){await supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}setSyncStatus('已登出，現在為唯讀模式。','ok');updateEditModeUI();await loadRemoteEvents({quiet:true});toast('已登出編輯模式')}
+async function loadRemoteEvents(opts={}){if(!remoteCanRead())return false;const {data,error}=await supabaseClient.from('schedule_events').select('id,project_id,date,title,category,week,original_date,sort_order').eq('project_id',supabaseConfig.projectId).order('date',{ascending:true}).order('sort_order',{ascending:true});if(error){events=[];renderAll();setSyncStatus('讀取 Supabase 失敗：'+remoteErrorText(error),'error');return false}events=(data||[]).map(fromDbEvent);saveEvents();renderAll();if(!opts.quiet)setSyncStatus(currentUser?'Supabase 已同步，編輯模式中。':'Supabase 已同步，目前為唯讀模式。','ok');return true}
 async function replaceRemoteEvents(list){if(!remoteCanWrite())return false;suppressRemoteReload=true;const {error:delError}=await supabaseClient.from('schedule_events').delete().eq('project_id',supabaseConfig.projectId);if(delError){suppressRemoteReload=false;setSyncStatus('清空 Supabase 排程失敗：'+remoteErrorText(delError),'error');return false}const rows=list.map((e,i)=>toDbEvent(e,i));if(rows.length){const {error}=await supabaseClient.from('schedule_events').upsert(rows,{onConflict:'project_id,id'});if(error){suppressRemoteReload=false;setSyncStatus('寫入 Supabase 失敗：'+remoteErrorText(error),'error');return false}}suppressRemoteReload=false;return true}
 async function uploadCurrentSchedule(){if(!supabaseClient||!currentUser){await connectSupabase(false)}if(!remoteCanWrite()){toast('請先連線並登入 Supabase');return}if(!(await customConfirm('要把目前畫面上的排程上傳到 Supabase 嗎？\n\n這會取代此 project id 底下既有的 schedule_events。')))return;const ok=await replaceRemoteEvents(events.length?events:structuredClone(INITIAL_EVENTS));if(ok){await loadRemoteEvents({keepLocalWhenEmpty:true,quiet:true});toast('已上傳到 Supabase')}}
-function subscribeToRemoteChanges(){if(!supabaseClient||!currentUser||!supabaseConfig.projectId)return;if(scheduleChannel){supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}scheduleChannel=supabaseClient.channel('schedule-events-'+supabaseConfig.projectId).on('postgres_changes',{event:'*',schema:'public',table:'schedule_events',filter:'project_id=eq.'+supabaseConfig.projectId},async()=>{if(suppressRemoteReload)return;await loadRemoteEvents({keepLocalWhenEmpty:true,quiet:true})}).subscribe()}
+function subscribeToRemoteChanges(){if(!supabaseClient||!supabaseConfig.projectId)return;if(scheduleChannel){supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}scheduleChannel=supabaseClient.channel('schedule-events-'+supabaseConfig.projectId).on('postgres_changes',{event:'*',schema:'public',table:'schedule_events',filter:'project_id=eq.'+supabaseConfig.projectId},async()=>{if(suppressRemoteReload)return;await loadRemoteEvents({quiet:true})}).subscribe()}
 function showModal(message,buttons){
   return new Promise(resolve=>{
     const overlay=document.createElement('div');overlay.className='modal-overlay';
@@ -260,6 +275,7 @@ function importDataBackup(file){
 }
 function isoWeekYear(dateStr){const d=new Date(dateStr+'T00:00:00');const day=(d.getDay()+6)%7;const thursday=new Date(d);thursday.setDate(d.getDate()-day+3);return thursday.getFullYear()}
 async function addEvent(){
+  if(!remoteCanWrite()){toast('請先登入後再新增活動');return}
   const dateEl=document.getElementById('addDate'),titleEl=document.getElementById('addTitle'),catEl=document.getElementById('addCategory');
   const date=dateEl.value,title=titleEl.value.trim(),category=catEl.value;
   if(!date){toast('請選擇日期');return}
@@ -276,6 +292,7 @@ async function addEvent(){
   toast('已新增「'+title+'」');
 }
 async function deleteEvent(id){
+  if(!remoteCanWrite()){toast('請先登入後再刪除活動');return}
   const e=events.find(x=>x.id===id);if(!e)return;
   if(!(await customConfirm('要刪除「'+e.title+'」嗎？'))) return;
   if(remoteCanWrite()){
@@ -303,6 +320,7 @@ function showDateModal(ev){
   });
 }
 async function openDateEditor(id){
+  if(!remoteCanWrite()){return}
   const ev=events.find(x=>x.id===id);if(!ev)return;
   const newDate=await showDateModal(ev);
   if(newDate && newDate!==ev.date){moveEvent(id,newDate);toast('已移到 '+fmtDate(newDate,true))}
@@ -311,14 +329,15 @@ function fmtDate(s,withYear=false){const d=new Date(s+'T00:00:00');return new In
 function iso(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function visibleEvent(e){const catOk=filter==='全部'||e.category===filter;const q=query.trim().toLowerCase();const qOk=!q||(`${e.title} ${e.category} ${e.week}`).toLowerCase().includes(q);return catOk&&qOk}
 function sourceWeekForDate(date){const t=new Date(date+'T00:00:00');const w=WEEK_SUMMARIES.find(w=>t>=new Date(w.start+'T00:00:00')&&t<=new Date(w.end+'T00:00:00'));if(w)return w.week; const monday=new Date(t); const day=(monday.getDay()+6)%7;monday.setDate(monday.getDate()-day); const jan4=new Date(monday.getFullYear(),0,4);const jan4Mon=new Date(jan4);jan4Mon.setDate(jan4.getDate()-((jan4.getDay()+6)%7));const n=Math.floor((monday-jan4Mon)/604800000)+1;return 'W'+n}
-async function moveEvent(id,newDate){const e=events.find(x=>x.id===id);if(!e)return;const oldDate=e.date,oldWeek=e.week;e.date=newDate;e.week=sourceWeekForDate(newDate);saveEvents();renderAll();if(remoteCanWrite()){const {error}=await supabaseClient.from('schedule_events').update({date:newDate,week:e.week,updated_at:new Date().toISOString()}).eq('project_id',supabaseConfig.projectId).eq('id',id);if(error){e.date=oldDate;e.week=oldWeek;saveEvents();renderAll();setSyncStatus('更新日期失敗：'+remoteErrorText(error),'error')}}}
+async function moveEvent(id,newDate){if(!remoteCanWrite()){await loadRemoteEvents({quiet:true});toast('請先登入後再移動活動');return}const e=events.find(x=>x.id===id);if(!e)return;const oldDate=e.date,oldWeek=e.week;e.date=newDate;e.week=sourceWeekForDate(newDate);saveEvents();renderAll();if(remoteCanWrite()){const {error}=await supabaseClient.from('schedule_events').update({date:newDate,week:e.week,updated_at:new Date().toISOString()}).eq('project_id',supabaseConfig.projectId).eq('id',id);if(error){e.date=oldDate;e.week=oldWeek;saveEvents();renderAll();setSyncStatus('更新日期失敗：'+remoteErrorText(error),'error')}}}
 function setView(v){currentView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===(v==='calendar'?'calendarView':'listView')));document.querySelectorAll('.nav-btn[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.getElementById('viewTitle').textContent=v==='calendar'?'專案時程｜行事曆':'專案時程｜清單';document.getElementById('toggleBtn').textContent=v==='calendar'?'切換清單':'切換行事曆';document.getElementById('mobileViewBtn').textContent=v==='calendar'?'☷':'▦';renderAll()}
 function renderAll(){renderCalendar();renderList();const shown=events.filter(visibleEvent).length;document.getElementById('countLabel').textContent=`顯示 ${shown} / ${events.length} 個日程`;document.getElementById('prevBtn').style.visibility=currentView==='calendar'?'visible':'hidden';document.getElementById('nextBtn').style.visibility=currentView==='calendar'?'visible':'hidden';document.getElementById('todayBtn').style.visibility=currentView==='calendar'?'visible':'hidden'}
 
 function eventHTML(e,mode='cal'){
   const yw=isoWeekYear(e.date)+' · '+e.week;
-  if(mode==='cal') return `<div class="event" data-id="${e.id}" data-cat="${e.category}"><div class="event-row"><span>${esc(e.title)}</span><span class="evt-del" data-id="${e.id}" title="刪除">✕</span></div><div class="meta">${esc(e.category)} · ${esc(yw)}</div></div>`;
-  return `<div class="list-card" data-id="${e.id}" data-cat="${e.category}"><span class="list-card-title">${esc(e.title)}</span><span class="evt-del" data-id="${e.id}" title="刪除">✕</span></div>`;
+  const del=remoteCanWrite()?`<span class="evt-del" data-id="${e.id}" title="刪除">✕</span>`:'';
+  if(mode==='cal') return `<div class="event" data-id="${e.id}" data-cat="${e.category}"><div class="event-row"><span>${esc(e.title)}</span>${del}</div><div class="meta">${esc(e.category)} · ${esc(yw)}</div></div>`;
+  return `<div class="list-card" data-id="${e.id}" data-cat="${e.category}"><span class="list-card-title">${esc(e.title)}</span>${del}</div>`;
 }
 function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function startOfToday(){const d=new Date();d.setHours(0,0,0,0);return d}
@@ -348,7 +367,7 @@ function renderList(){
  html+='</section>'}
  root.innerHTML=html||'<div class="empty">沒有符合條件的日程</div>';initSortables('.date-drop',false);
 }
-function initSortables(selector,isCalendar){if(!window.Sortable)return;document.querySelectorAll(selector).forEach(el=>{new Sortable(el,{group:'schedule',animation:160,delay:120,delayOnTouchOnly:true,touchStartThreshold:4,ghostClass:'drag-ghost',chosenClass:'drag-chosen',fallbackOnBody:true,swapThreshold:.6,filter:'.evt-del',preventOnFilter:false,onAdd(evt){const card=evt.item;const parent=isCalendar?card.closest('.day'):card.closest('.date-drop');const date=parent?.dataset.date;if(date)moveEvent(card.dataset.id,date)},onUpdate(evt){saveEvents();const parent=evt.item.closest('.day,.date-drop');const date=parent?.dataset.date;if(date)saveRemoteSortOrder(date)}})})}
+function initSortables(selector,isCalendar){if(!window.Sortable||!remoteCanWrite())return;document.querySelectorAll(selector).forEach(el=>{new Sortable(el,{group:'schedule',animation:160,delay:120,delayOnTouchOnly:true,touchStartThreshold:4,ghostClass:'drag-ghost',chosenClass:'drag-chosen',fallbackOnBody:true,swapThreshold:.6,filter:'.evt-del',preventOnFilter:false,onAdd(evt){const card=evt.item;const parent=isCalendar?card.closest('.day'):card.closest('.date-drop');const date=parent?.dataset.date;if(date)moveEvent(card.dataset.id,date)},onUpdate(evt){saveEvents();const parent=evt.item.closest('.day,.date-drop');const date=parent?.dataset.date;if(date)saveRemoteSortOrder(date)}})})}
 async function saveRemoteSortOrder(date){if(!remoteCanWrite())return;const dayEvents=events.filter(e=>e.date===date);dayEvents.forEach((e,i)=>e.sortOrder=i);saveEvents();await Promise.all(dayEvents.map((e,i)=>supabaseClient.from('schedule_events').update({sort_order:i,updated_at:new Date().toISOString()}).eq('project_id',supabaseConfig.projectId).eq('id',e.id)))}
 
 document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
@@ -381,8 +400,9 @@ document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{do
 document.getElementById('connectSupabaseBtn')?.addEventListener('click',()=>connectSupabase(true));
 document.getElementById('loginBtn')?.addEventListener('click',sendMagicLink);
 document.getElementById('signOutBtn')?.addEventListener('click',signOutSupabase);
+document.getElementById('exitEditBtn')?.addEventListener('click',signOutSupabase);
 document.getElementById('uploadRemoteBtn')?.addEventListener('click',uploadCurrentSchedule);
-async function boot(){hydrateSupabaseFields();setView('calendar');if(hasSupabaseConfig()){await connectSupabase(false)}else{setSyncStatus('本機模式：尚未連線 Supabase','warn')}}
+async function boot(){hydrateSupabaseFields();document.body.classList.add('readonly');setView('calendar');const hasAuthCallback=Boolean(window.location.hash||new URLSearchParams(window.location.search||'').get('code')||new URLSearchParams(window.location.search||'').get('error'));if(hasSupabaseConfig()){await connectSupabase(false)}else if(hasAuthCallback){setSyncStatus('收到登入回跳，但 Supabase 設定不完整。','warn')}else{events=[];renderAll();setSyncStatus('Supabase 設定不完整，無法顯示雲端資料。','error')}}
 boot();
 </script>
 </body></html>
