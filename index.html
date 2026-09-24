@@ -4,405 +4,77 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#FAFAF9" />
-<title>專案時程</title>
+<title>金魚腦 Vlog｜專案時程</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
 <style>
-:root{--primary:#C2410C;--primary-hover:#9A3412;--accent:#F59E0B;--neutral:#78716C;--bg:#FAFAF9;--surface:#F5F5F4;--raised:#E7E5E4;--text:#1C1917;--text2:#57534E;--border:#D6D3D1;--success:#16A34A;--warning:#D97706;--error:#DC2626;--sidebar:256px;--shadow:0 4px 16px rgba(28,25,23,.06)}
-*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:"Source Sans 3",system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.48} button,input{font:inherit}
-button{touch-action:manipulation} .app{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr)}
-.sidebar{position:sticky;top:0;height:100vh;padding:24px 16px;border-right:1px solid var(--border);background:rgba(250,250,249,.94);backdrop-filter:blur(14px);z-index:30;overflow:auto}
-.brand{padding:4px 8px 24px} .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--neutral);font-weight:600} h1,h2,h3{font-family:"Playfair Display",serif;letter-spacing:-.02em;margin:0} h1{font-size:30px;line-height:1.15;margin-top:5px} .subtitle{color:var(--text2);font-size:15px;margin:8px 0 0}
-.nav-section{margin-top:20px} .nav-label{padding:0 10px 8px;color:var(--neutral);font-size:13px;font-weight:600} .nav-btn{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--text2);padding:10px 12px;border-radius:8px;cursor:pointer;text-align:left;position:relative} .nav-btn:hover{background:var(--surface)} .nav-btn.active{color:var(--primary);background:#FFF2EC} .nav-btn.active:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--primary);border-radius:99px}
-.legend{display:grid;gap:8px;margin-top:8px} .legend-row{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);padding:0 10px} .dot{width:8px;height:8px;border-radius:99px}
-.main{min-width:0;padding:32px 32px 64px} .container{max-width:1200px;margin:auto}
-.topbar{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:24px} .headline h2{font-size:44px;line-height:1.05} .headline p{margin:8px 0 0;color:var(--text2)}
-.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end} .btn{height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-weight:600;cursor:pointer;transition:.15s} .btn:hover{background:var(--surface)} .btn.primary{background:var(--primary);border-color:var(--primary);color:#fff} .btn.primary:hover{background:var(--primary-hover);box-shadow:0 4px 12px rgba(194,65,12,.25)} .btn.icon{width:40px;padding:0;display:grid;place-items:center}
-.toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:12px;margin-bottom:20px} .search{position:relative} .search input{width:100%;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 14px 0 40px;color:var(--text);outline:0} .search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(194,65,12,.12)} .search span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--neutral)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end} .chip{border:1px solid transparent;background:var(--surface);color:var(--text2);border-radius:9999px;padding:8px 14px;font-size:15px;cursor:pointer} .chip.active{background:var(--primary);color:white}
-.panel{border:1px solid var(--border);border-radius:12px;background:rgba(245,245,244,.76);overflow:hidden} .panel-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px} .panel-title{font-weight:600;font-size:16px} .muted{color:var(--neutral);font-size:14px}
-.view{display:none} .view.active{display:block}
-/* Calendar */
-.calendar-wrap{overflow:auto;-webkit-overflow-scrolling:touch} .calendar{min-width:760px} .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);background:var(--surface)} .weekday{padding:10px;text-align:center;font-size:13px;color:var(--neutral);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:var(--border);gap:1px} .day{min-height:150px;background:var(--bg);padding:11px;position:relative} .day.out{background:#F7F5F2;color:#A8A29E} .day.today{box-shadow:inset 0 0 0 2px var(--primary)} .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px} .day-num{font-size:14px;font-weight:600} .day-count{font-size:12px;color:var(--neutral)} .day-events{min-height:84px;display:flex;flex-direction:column;gap:6px}
-.event{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:8px;padding:8px 9px;font-size:13px;line-height:1.38;cursor:grab;box-shadow:0 1px 0 rgba(28,25,23,.02)} .event:hover{box-shadow:var(--shadow);transform:translateY(-1px)} .event:active{cursor:grabbing} .event .meta{font-size:11px;color:var(--neutral);margin-top:3px} .event[data-cat="研究"]{border-left-color:#A16207} .event[data-cat="老師"]{border-left-color:#7C3AED} .event[data-cat="假日"]{border-left-color:var(--error);background:#FFF1F0} .event[data-cat="備註"]{border-left-color:var(--accent)} .event.filtered{display:none}
-.event-row{display:flex;align-items:flex-start;justify-content:space-between;gap:6px} .evt-del{cursor:pointer;color:var(--neutral);font-size:12px;line-height:1.4;padding:1px 4px;border-radius:4px;flex:0 0 auto} .evt-del:hover{color:#fff;background:var(--error)}
-.add-field{height:38px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 10px;color:var(--text);width:100%}
-.note-band{font-size:12px;background:#FFF7E6;color:#92400E;border:1px solid #F9D899;border-radius:7px;padding:6px 8px;margin-bottom:6px}
-/* List */
-.list-view{padding:8px 0} .week-block{padding:18px 20px;border-bottom:1px solid var(--border)} .week-block:last-child{border-bottom:0} .week-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px} .week-title{display:flex;align-items:baseline;gap:10px} .week-title h3{font-family:"Source Sans 3",sans-serif;font-size:19px;letter-spacing:0} .week-range{font-size:14px;color:var(--neutral)} .week-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px} .summary-pill{font-size:13px;background:var(--bg);border:1px solid var(--border);padding:7px 10px;border-radius:9999px;color:var(--text2)}
-.date-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:6px 0} .date-label{font-size:15px;font-weight:700;color:var(--text);padding-top:7px} .date-drop{min-height:36px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-radius:10px;padding:5px;transition:.15s} .date-drop.drag-over{background:#FFF2EC;box-shadow:inset 0 0 0 1px rgba(194,65,12,.2)} .list-card{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:360px;flex:0 1 auto;background:var(--bg);border:1px solid var(--border);border-left:4px solid var(--primary);border-radius:9999px;padding:6px 10px 6px 14px;cursor:grab} .list-card[data-cat="研究"]{border-left-color:#A16207} .list-card[data-cat="老師"]{border-left-color:#7C3AED} .list-card[data-cat="假日"]{border-left-color:var(--error)} .list-card-title{font-weight:600;font-size:15px} .list-card-meta{font-size:13px;color:var(--neutral);margin-top:4px}
-.empty{padding:40px;text-align:center;color:var(--neutral)}
-/* Mobile */
-.mobile-head{display:none} .sheet-note{margin-top:16px;padding:12px 14px;border-radius:12px;border:1px dashed var(--border);color:var(--text2);font-size:14px;background:rgba(245,245,244,.55)}
-.drag-ghost{opacity:.35} .drag-chosen{box-shadow:0 12px 28px rgba(28,25,23,.14)!important} .sortable-fallback{opacity:.95;transform:rotate(1deg)}
-.modal-overlay{position:fixed;inset:0;background:rgba(28,25,23,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
-.modal-box{background:var(--bg);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.25);max-width:420px;width:100%;padding:22px 22px 16px;border:1px solid var(--border)}
-.modal-msg{font-size:15px;line-height:1.55;color:var(--text);white-space:pre-line}
-.modal-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
-.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,12px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:9999px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .25s,transform .25s;z-index:1000;max-width:80vw;text-align:center}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.supabase-box{display:flex;flex-direction:column;gap:8px;padding:0 0 2px}.supabase-hint{font-size:12px;color:var(--neutral);line-height:1.45;padding:0 2px}.status-line{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border)}.status-line[data-state="ok"]{border-color:rgba(22,163,74,.35);color:#166534;background:#F0FDF4}.status-line[data-state="warn"]{border-color:rgba(217,119,6,.35);color:#92400E;background:#FFFBEB}.status-line[data-state="error"]{border-color:rgba(220,38,38,.35);color:#991B1B;background:#FEF2F2}.mini-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}.btn.small{height:34px;padding:0 10px;font-size:13px}.btn.block{width:100%}
-
-
-.is-hidden{display:none!important}
-body.readonly .edit-only{display:none!important}
-body.readonly .evt-del{display:none!important}
-body.readonly .event,body.readonly .list-card{cursor:default}
-body.readonly .event:hover{transform:none}
-body.readonly .panel-head .muted:last-child::after{content:"；目前為唯讀模式，登入後可新增、拖曳與刪除"}
-.default-config{display:none!important}
-@media(max-width:900px){:root{--sidebar:220px} .main{padding:24px 20px 48px} .headline h2{font-size:36px} .toolbar{grid-template-columns:1fr} .chips{justify-content:flex-start}}
-@media(max-width:720px){.app{display:block} .sidebar{display:none} .mobile-head{display:flex;position:sticky;top:0;z-index:50;padding:12px 16px;background:rgba(250,250,249,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);align-items:center;justify-content:space-between} .mobile-title{font-family:"Playfair Display",serif;font-weight:600;font-size:18px} .main{padding:20px 14px 40px} .topbar{display:block} .actions{margin-top:16px;justify-content:flex-start} .headline h2{font-size:32px} .panel{border-radius:12px} .date-row{grid-template-columns:78px 1fr} .list-card{min-width:100%;max-width:none} .calendar{min-width:690px} .day{min-height:138px}}
-@media(prefers-color-scheme:dark){body[data-theme="auto"]{--bg:#1C1917;--surface:#292524;--raised:#44403C;--text:#FAFAF9;--text2:#D6D3D1;--neutral:#A8A29E;--border:#44403C} body[data-theme="auto"] .sidebar,body[data-theme="auto"] .mobile-head{background:rgba(28,25,23,.94)} body[data-theme="auto"] .nav-btn.active{background:#3A2118} body[data-theme="auto"] .day.out{background:#211E1C} body[data-theme="auto"] .event[data-cat="假日"]{background:#3A1F1D} body[data-theme="auto"] .note-band{background:#382A14;color:#FCD34D;border-color:#5B4523}}
+:root{--primary:#C2410C;--primary2:#9A3412;--bg:#FAFAF9;--surface:#F5F5F4;--raised:#E7E5E4;--text:#1C1917;--text2:#57534E;--muted:#78716C;--border:#D6D3D1;--red:#DC2626;--yellow:#D97706;--green:#16A34A;--shadow:0 6px 18px rgba(28,25,23,.08);--sidebar:256px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:"Source Sans 3",system-ui,-apple-system,sans-serif;font-size:17px;line-height:1.48}button,input,select{font:inherit}.app{min-height:100vh;display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr)}.sidebar{position:sticky;top:0;height:100vh;overflow:auto;padding:24px 16px;border-right:1px solid var(--border);background:rgba(250,250,249,.94);backdrop-filter:blur(14px);z-index:30}.brand{padding:4px 8px 20px}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}h1,h2{font-family:"Playfair Display",serif;letter-spacing:-.02em;margin:0}h1{font-size:30px;line-height:1.15;margin-top:5px}.nav-section{margin-top:20px}.nav-label{padding:0 10px 8px;color:var(--muted);font-size:13px;font-weight:700}.nav-btn{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:var(--text2);padding:10px 12px;border-radius:8px;cursor:pointer;text-align:left;position:relative}.nav-btn:hover{background:var(--surface)}.nav-btn.active{color:var(--primary);background:#FFF2EC}.nav-btn.active:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;background:var(--primary);border-radius:99px}.legend{display:grid;gap:8px}.legend-row{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text2);padding:0 10px}.dot{width:8px;height:8px;border-radius:99px}.main{min-width:0;padding:32px 32px 64px}.container{max-width:1200px;margin:auto}.topbar{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.headline h2{font-size:44px;line-height:1.05}.headline p{margin:8px 0 0;color:var(--text2)}.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.btn{height:40px;padding:0 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-weight:700;cursor:pointer;transition:.15s}.btn:hover{background:var(--surface)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2);box-shadow:0 4px 12px rgba(194,65,12,.25)}.btn.icon{width:40px;padding:0;display:grid;place-items:center}.btn.small{height:34px;padding:0 10px;font-size:13px}.field{height:38px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 10px;color:var(--text);width:100%;outline:0}.field:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(194,65,12,.12)}.stack{display:flex;flex-direction:column;gap:8px}.hint{font-size:12px;line-height:1.45;color:var(--muted);padding:0 2px}.status{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:8px;background:var(--surface);color:var(--text2);border:1px solid var(--border)}.status.ok{border-color:rgba(22,163,74,.35);color:#166534;background:#F0FDF4}.status.warn{border-color:rgba(217,119,6,.35);color:#92400E;background:#FFFBEB}.status.err{border-color:rgba(220,38,38,.35);color:#991B1B;background:#FEF2F2}.toolbar{display:grid;grid-template-columns:minmax(180px,1fr) auto;gap:12px;margin-bottom:20px}.search{position:relative}.search input{width:100%;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--surface);padding:0 14px 0 40px;color:var(--text);outline:0}.search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(194,65,12,.12)}.search span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.chip{border:1px solid transparent;background:var(--surface);color:var(--text2);border-radius:999px;padding:8px 14px;font-size:15px;cursor:pointer}.chip.active{background:var(--primary);color:white}.panel{border:1px solid var(--border);border-radius:12px;background:rgba(245,245,244,.76);overflow:hidden}.panel-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px}.panel-title{font-weight:700;font-size:16px}.muted{color:var(--muted);font-size:14px}.view{display:none}.view.active{display:block}.calendar-wrap{overflow:auto;-webkit-overflow-scrolling:touch}.calendar{min-width:760px}.weekdays,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.weekdays{border-bottom:1px solid var(--border);background:var(--surface)}.weekday{padding:10px;text-align:center;font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.06em}.cal-grid{background:var(--border);gap:1px}.day{min-height:150px;background:var(--bg);padding:11px;position:relative}.day.out{background:#F7F5F2;color:#A8A29E}.day.today{box-shadow:inset 0 0 0 2px var(--primary)}.day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.day-num{font-size:14px;font-weight:700}.day-count{font-size:12px;color:var(--muted)}.day-events{min-height:84px;display:flex;flex-direction:column;gap:6px}.event,.list-card{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--primary);box-shadow:0 1px 0 rgba(28,25,23,.02);cursor:pointer}.event{border-radius:8px;padding:8px 9px;font-size:13px;line-height:1.38}.event:hover{box-shadow:var(--shadow);transform:translateY(-1px)}.meta{font-size:11px;color:var(--muted);margin-top:3px}.event[data-cat="研究"],.list-card[data-cat="研究"]{border-left-color:#A16207}.event[data-cat="老師"],.list-card[data-cat="老師"]{border-left-color:#7C3AED}.event[data-cat="假日"],.list-card[data-cat="假日"]{border-left-color:var(--red);background:#FFF1F0}.event[data-cat="備註"],.list-card[data-cat="備註"]{border-left-color:#F59E0B}.event-row{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}.del{cursor:pointer;color:var(--muted);font-size:12px;line-height:1.4;padding:1px 4px;border-radius:4px;flex:0 0 auto}.del:hover{color:#fff;background:var(--red)}.list-view{padding:8px 0}.week-block{padding:18px 20px;border-bottom:1px solid var(--border)}.week-block:last-child{border-bottom:0}.week-title{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}.week-title h3{font-size:19px;margin:0}.date-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;padding:6px 0}.date-label{font-size:15px;font-weight:700;padding-top:7px}.date-drop{min-height:36px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-radius:10px;padding:5px}.list-card{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:360px;flex:0 1 auto;border-radius:999px;padding:6px 10px 6px 14px}.list-card-title{font-weight:700;font-size:15px}.empty{padding:40px;text-align:center;color:var(--muted)}.mobile-head{display:none}.sheet-note{margin-top:16px;padding:12px 14px;border-radius:12px;border:1px dashed var(--border);color:var(--text2);font-size:14px;background:rgba(245,245,244,.55)}.drag-ghost{opacity:.35}.drag-chosen{box-shadow:0 12px 28px rgba(28,25,23,.14)!important}.modal-overlay{position:fixed;inset:0;background:rgba(28,25,23,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}.modal-box{background:var(--bg);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.25);max-width:430px;width:100%;padding:22px;border:1px solid var(--border)}.modal-title{font-weight:800;margin-bottom:8px}.modal-label{display:block;margin-top:10px}.modal-label span{display:block;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:5px}.modal-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,12px);background:var(--text);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:.25s;z-index:1000;max-width:80vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}body.readonly .edit-only,body.readonly .del{display:none!important}body.readonly .event,body.readonly .list-card{cursor:default}body.readonly .event:hover{transform:none}.hidden{display:none!important}@media(max-width:900px){:root{--sidebar:220px}.main{padding:24px 20px 48px}.headline h2{font-size:36px}.toolbar{grid-template-columns:1fr}.chips{justify-content:flex-start}}@media(max-width:720px){.app{display:block}.sidebar{display:none}.mobile-head{display:flex;position:sticky;top:0;z-index:50;padding:12px 16px;background:rgba(250,250,249,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);align-items:center;justify-content:space-between}.mobile-title{font-family:"Playfair Display",serif;font-weight:600;font-size:18px}.main{padding:20px 14px 40px}.topbar{display:block}.actions{margin-top:16px;justify-content:flex-start}.headline h2{font-size:32px}.date-row{grid-template-columns:78px 1fr}.list-card{min-width:100%;max-width:none}.calendar{min-width:690px}.day{min-height:138px}}
 </style>
 </head>
-<body data-theme="light">
-<div class="mobile-head"><div class="mobile-title">專案時程</div><button class="btn icon" id="mobileViewBtn" aria-label="切換檢視">▦</button></div>
+<body class="readonly">
+<div class="mobile-head"><div class="mobile-title">專案時程</div><button class="btn icon" id="mobileViewBtn">▦</button></div>
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="eyebrow">Ember Studio</div><h1>專案時程</h1></div>
-  <div class="nav-section"><div class="nav-label">檢視</div><button class="nav-btn active" data-view="calendar">▦　行事曆</button><button class="nav-btn" data-view="list">☷　清單</button></div>
-  <div class="nav-section"><div class="nav-label">分類</div><div class="legend"><div class="legend-row"><span class="dot" style="background:#C2410C"></span>行銷</div><div class="legend-row"><span class="dot" style="background:#A16207"></span>研究</div><div class="legend-row"><span class="dot" style="background:#7C3AED"></span>老師</div><div class="legend-row"><span class="dot" style="background:#DC2626"></span>假日</div><div class="legend-row"><span class="dot" style="background:#F59E0B"></span>備註</div></div></div>
-  <div class="nav-section edit-only" id="addSection"><div class="nav-label">新增活動</div><div style="display:flex;flex-direction:column;gap:8px">
-    <input type="date" id="addDate" class="add-field" />
-    <input type="text" id="addTitle" class="add-field" placeholder="任務標題" />
-    <select id="addCategory" class="add-field"><option value="行銷">行銷</option><option value="研究">研究</option><option value="老師">老師</option><option value="假日">假日</option><option value="備註">備註</option></select>
-    <button class="btn primary" id="addEventBtn" style="height:38px">＋　新增活動</button>
-  </div></div>
-
-  <div class="nav-section" id="supabaseSection"><div class="nav-label">Supabase 同步</div><div class="supabase-box">
-    <input type="url" id="sbUrl" class="add-field default-config" placeholder="Supabase Project URL" autocomplete="off" />
-    <input type="password" id="sbKey" class="add-field default-config" placeholder="Publishable key / anon key" autocomplete="off" />
-    <input type="text" id="sbProjectId" class="add-field default-config" placeholder="project id：kingfish-vlog" value="kingfish-vlog" />
-    <input type="url" id="sbRedirectUrl" class="add-field default-config" placeholder="登入回跳網址（建議填 GitHub Pages 或 localhost，可留空）" autocomplete="off" />
-    <div class="mini-btns default-config"><button class="btn small" id="connectSupabaseBtn">連線</button><button class="btn small" id="signOutBtn">登出</button></div>
-    <input type="email" id="loginEmail" class="add-field" placeholder="登入 Email" autocomplete="email" />
-    <button class="btn primary block" id="loginBtn" style="height:36px">寄登入連結</button>
-    <button class="btn block default-config" id="uploadRemoteBtn" style="height:36px">上傳目前排程</button>
-    <div class="status-line" id="syncStatus" data-state="warn">本機模式：尚未連線 Supabase</div>
-    <div class="supabase-hint">未登入也會顯示 Supabase 最新內容；登入後可進入編輯模式。</div>
-  </div></div>
-  <div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportDataBtn" title="把目前瀏覽器裡的完整排程（含新增/刪除/拖曳調整）存成備份檔">⭳　匯出目前排程</button><button class="nav-btn edit-only" id="importDataBtn" title="選擇之前匯出的備份檔，匯入後會取代目前顯示的排程">⭱　匯入排程備份</button><input type="file" id="importFileInput" accept="application/json,.json" style="display:none" /><button class="nav-btn" id="exportIcsBtn" title="下載後至 Google 日曆「設定」→「匯入及匯出」→「匯入」選擇此檔案">⭳　匯出至 Google 日曆</button><button class="nav-btn edit-only" id="resetBtn">↺　還原原始排程</button><button class="nav-btn edit-only" id="exitEditBtn">⎋　登出編輯模式</button></div>
+<div class="brand"><div class="eyebrow">Ember Studio</div><h1>專案時程</h1></div>
+<div class="nav-section"><div class="nav-label">檢視</div><button class="nav-btn active" data-view="calendar">▦　行事曆</button><button class="nav-btn" data-view="list">☷　清單</button></div>
+<div class="nav-section"><div class="nav-label">分類</div><div class="legend" id="legend"></div></div>
+<div class="nav-section edit-only" id="addSection"><div class="nav-label">新增活動</div><div class="stack"><input type="date" id="addDate" class="field"><input type="text" id="addTitle" class="field" placeholder="任務標題"><select id="addCategory" class="field"></select><button class="btn primary" id="addEventBtn">＋　新增活動</button></div></div>
+<div class="nav-section" id="loginSection"><div class="nav-label">編輯模式</div><div class="stack"><input type="email" id="loginEmail" class="field" placeholder="Email"><button class="btn primary" id="loginBtn">寄登入連結</button><div class="hint">未登入也會讀取 Supabase 最新時程；登入後才可新增、拖曳、刪除與編輯活動。</div></div></div>
+<div class="nav-section"><div class="nav-label">資料</div><button class="nav-btn" id="exportDataBtn">⭳　匯出目前排程</button><button class="nav-btn" id="exportIcsBtn">⭳　匯出至 Google 日曆</button><button class="nav-btn edit-only" id="signOutBtn">↺　登出編輯模式</button></div>
+<div class="nav-section"><div class="nav-label">狀態</div><div class="status" id="statusLine">讀取中…</div></div>
 </aside>
 <main class="main"><div class="container">
-  <div class="topbar"><div class="headline"><div class="eyebrow">Course project timeline</div><h2 id="viewTitle">金魚腦 Vlog｜行事曆</h2></div><div class="actions"><button class="btn icon" id="prevBtn" aria-label="上個月">←</button><button class="btn" id="todayBtn">今天</button><button class="btn icon" id="nextBtn" aria-label="下個月">→</button><button class="btn primary" id="toggleBtn">切換清單</button></div></div>
-  <div class="toolbar"><div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="搜尋任務、週次、關鍵字…" /></div><div class="chips" id="chips"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="行銷">行銷</button><button class="chip" data-filter="研究">研究</button><button class="chip" data-filter="老師">老師</button><button class="chip" data-filter="假日">假日</button></div></div>
-  <section class="panel">
-    <div class="panel-head"><div><div class="panel-title" id="periodLabel"></div><div class="muted" id="countLabel"></div></div><div class="muted">拖曳可移動；點卡片可直接改日期（跨月適用）</div></div>
-    <div class="view active" id="calendarView"><div class="calendar-wrap"><div class="calendar"><div class="cal-weekdays"><div class="weekday">Sun.</div><div class="weekday">Mon.</div><div class="weekday">Tue.</div><div class="weekday">Wed.</div><div class="weekday">Thu.</div><div class="weekday">Fri.</div><div class="weekday">Sat.</div></div><div class="cal-grid" id="calGrid"></div></div></div></div>
-    <div class="view" id="listView"><div class="list-view" id="listRoot"></div></div>
-  </section>
-  <div class="sheet-note">來源：Google 試算表分頁「04 時程表N」（gid=1043600327）。已支援 Supabase 雲端同步；未登入時為唯讀，登入後可新增、拖曳、刪除。</div>
+<div class="topbar"><div class="headline"><div class="eyebrow">Course project timeline</div><h2 id="viewTitle">專案時程｜行事曆</h2><p id="modeText">公開檢視模式</p></div><div class="actions"><button class="btn icon" id="prevBtn">←</button><button class="btn" id="todayBtn">今天</button><button class="btn icon" id="nextBtn">→</button><button class="btn primary" id="toggleBtn">切換清單</button></div></div>
+<div class="toolbar"><div class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="搜尋任務、週次、關鍵字…"></div><div class="chips" id="chips"></div></div>
+<section class="panel"><div class="panel-head"><div><div class="panel-title" id="periodLabel"></div><div class="muted" id="countLabel"></div></div><div class="muted" id="helpText">公開讀取 Supabase；登入後可編輯</div></div><div class="view active" id="calendarView"><div class="calendar-wrap"><div class="calendar"><div class="weekdays"><div class="weekday">Sun.</div><div class="weekday">Mon.</div><div class="weekday">Tue.</div><div class="weekday">Wed.</div><div class="weekday">Thu.</div><div class="weekday">Fri.</div><div class="weekday">Sat.</div></div><div class="cal-grid" id="calGrid"></div></div></div></div><div class="view" id="listView"><div class="list-view" id="listRoot"></div></div></section>
+<div class="sheet-note">資料來源：Supabase 專案時程資料庫。未登入為唯讀模式；登入後點擊活動可編輯名稱、日期與分類。</div>
 </div></main>
 </div>
 <script>
-const INITIAL_EVENTS=[{"id": "e1", "date": "2026-09-22", "title": "PMF前期研究、競品研究、市場機會", "category": "行銷", "week": "W39", "originalDate": "2026-09-22"}, {"id": "e4", "date": "2026-09-24", "title": "PMF前期研究、資源盤點、內部課程資源", "category": "行銷", "week": "W39", "originalDate": "2026-09-24"}, {"id": "e7", "date": "2026-09-25", "title": "國定假日", "category": "假日", "week": "W39", "originalDate": "2026-09-25"}, {"id": "e8", "date": "2026-09-28", "title": "國定假日", "category": "假日", "week": "W40", "originalDate": "2026-09-28"}, {"id": "e9", "date": "2026-09-29", "title": "PMF再調整", "category": "行銷", "week": "W40", "originalDate": "2026-09-29"}, {"id": "e10", "date": "2026-09-30", "title": "C01｜行銷資源盤點（一）", "category": "研究", "week": "W40", "originalDate": "2026-09-30"}, {"id": "e11", "date": "2026-10-01", "title": "C01｜行銷資源盤點（二）", "category": "研究", "week": "W40", "originalDate": "2026-10-01"}, {"id": "e12", "date": "2026-10-02", "title": "資源盤點人選", "category": "研究", "week": "W40", "originalDate": "2026-10-02"}, {"id": "e13", "date": "2026-10-02", "title": "內部對焦會議", "category": "行銷", "week": "W40", "originalDate": "2026-10-02"}, {"id": "e14", "date": "2026-10-05", "title": "KOL邀約文件文案撰寫", "category": "行銷", "week": "W41", "originalDate": "2026-10-05"}, {"id": "e15", "date": "2026-10-06", "title": "KOL邀約", "category": "行銷", "week": "W41", "originalDate": "2026-10-06"}, {"id": "e16", "date": "2026-10-07", "title": "C02｜行銷溝通表撰寫", "category": "行銷", "week": "W41", "originalDate": "2026-10-07"}, {"id": "e17", "date": "2026-10-09", "title": "國定假日", "category": "假日", "week": "W41", "originalDate": "2026-10-09"}, {"id": "e18", "date": "2026-10-12", "title": "C02｜行銷溝通表撰寫、定價策略、波段優惠、波段安排", "category": "行銷", "week": "W42", "originalDate": "2026-10-12"}, {"id": "e20", "date": "2026-10-13", "title": "【內部】、溝通表對焦", "category": "行銷", "week": "W42", "originalDate": "2026-10-13"}, {"id": "e22", "date": "2026-10-14", "title": "C02｜行銷溝通表調整", "category": "行銷", "week": "W42", "originalDate": "2026-10-14"}, {"id": "e23", "date": "2026-10-15", "title": "【SC】、溝通表對焦會議", "category": "行銷", "week": "W42", "originalDate": "2026-10-15"}, {"id": "e25", "date": "2026-10-16", "title": "問卷文案撰寫", "category": "行銷", "week": "W42", "originalDate": "2026-10-16"}, {"id": "e26", "date": "2026-10-19", "title": "問卷廣告設定", "category": "行銷", "week": "W43", "originalDate": "2026-10-19"}, {"id": "e27", "date": "2026-10-20", "title": "問卷投廣（暫）", "category": "行銷", "week": "W43", "originalDate": "2026-10-20"}, {"id": "e28", "date": "2026-10-21", "title": "行銷腳本撰寫/調整", "category": "行銷", "week": "W43", "originalDate": "2026-10-21"}, {"id": "e29", "date": "2026-10-26", "title": "國定假日", "category": "假日", "week": "W44", "originalDate": "2026-10-26"}, {"id": "e30", "date": "2026-10-27", "title": "正課拍攝（暫）", "category": "老師", "week": "W44", "originalDate": "2026-10-27"}, {"id": "e31", "date": "2026-10-27", "title": "行銷腳本調整", "category": "行銷", "week": "W44", "originalDate": "2026-10-27"}, {"id": "e32", "date": "2026-10-28", "title": "正課拍攝（暫）", "category": "老師", "week": "W44", "originalDate": "2026-10-28"}, {"id": "e33", "date": "2026-10-29", "title": "正課拍攝（暫）", "category": "老師", "week": "W44", "originalDate": "2026-10-29"}, {"id": "e34", "date": "2026-10-29", "title": "行銷影片（暫）", "category": "行銷", "week": "W44", "originalDate": "2026-10-29"}, {"id": "e35", "date": "2026-10-30", "title": "正課拍攝（暫）", "category": "老師", "week": "W44", "originalDate": "2026-10-30"}, {"id": "e36", "date": "2026-10-30", "title": "行銷影片（暫）", "category": "行銷", "week": "W44", "originalDate": "2026-10-30"}, {"id": "e37", "date": "2026-12-04", "title": "連結 / 折價券設定", "category": "行銷", "week": "W49", "originalDate": "2026-12-04"}, {"id": "e38", "date": "2026-12-04", "title": "(建課程頁）", "category": "行銷", "week": "W49", "originalDate": "2026-12-04"}, {"id": "e39", "date": "2026-12-10", "title": "預熱文案撰寫", "category": "行銷", "week": "W50", "originalDate": "2026-12-10"}, {"id": "e40", "date": "2026-12-11", "title": "預熱廣告設定", "category": "行銷", "week": "W50", "originalDate": "2026-12-11"}, {"id": "e41", "date": "2026-12-16", "title": "開賣", "category": "行銷", "week": "W51", "originalDate": "2026-12-16"}, {"id": "e42", "date": "2026-12-16", "title": "文案撰寫 / 折價券", "category": "行銷", "week": "W51", "originalDate": "2026-12-16"}, {"id": "e43", "date": "2026-12-17", "title": "Chatbot設定", "category": "行銷", "week": "W51", "originalDate": "2026-12-17"}, {"id": "e44", "date": "2026-12-17", "title": "開賣廣告設定", "category": "行銷", "week": "W51", "originalDate": "2026-12-17"}, {"id": "e45", "date": "2026-12-21", "title": "預熱", "category": "行銷", "week": "W52", "originalDate": "2026-12-21"}, {"id": "e46", "date": "2026-12-25", "title": "國定假日", "category": "假日", "week": "W52", "originalDate": "2026-12-25"}, {"id": "e47", "date": "2026-12-29", "title": "開賣", "category": "行銷", "week": "W53", "originalDate": "2026-12-29"}, {"id": "e48", "date": "2027-01-01", "title": "國定假日", "category": "假日", "week": "W53", "originalDate": "2027-01-01"}];
-const WEEK_SUMMARIES=[{"week": "W39", "start": "2026-09-21", "end": "2026-09-25", "items": [{"category": "行銷", "text": "前期研究"}, {"category": "老師", "text": "備課"}]}, {"week": "W40", "start": "2026-09-28", "end": "2026-10-02", "items": [{"category": "老師", "text": "備課"}, {"category": "老師", "text": "平拍＋demo"}]}, {"week": "W41", "start": "2026-10-05", "end": "2026-10-09", "items": [{"category": "老師", "text": "備課"}]}, {"week": "W44", "start": "2026-10-26", "end": "2026-10-30", "items": [{"category": "行銷", "text": "行銷影片拍攝（暫）"}, {"category": "老師", "text": "正課拍攝"}]}, {"week": "W45", "start": "2026-11-02", "end": "2026-11-06", "items": [{"category": "行銷", "text": "行銷影片拍攝（暫）"}, {"category": "行銷", "text": "行銷影片剪輯-預熱1"}]}, {"week": "W46", "start": "2026-11-09", "end": "2026-11-13", "items": [{"category": "行銷", "text": "行銷影片拍攝（暫）"}, {"category": "行銷", "text": "行銷影片剪輯-預熱2"}, {"category": "行銷", "text": "KOL過稿腳本"}]}, {"week": "W48", "start": "2026-11-23", "end": "2026-11-27", "items": [{"category": "行銷", "text": "行銷素材製作-例行"}, {"category": "行銷", "text": "行銷影片剪輯-3"}, {"category": "行銷", "text": "KOL過稿腳本"}, {"category": "行銷", "text": "預熱廣告設定"}, {"category": "行銷", "text": "-  Chatbot、折扣券設定"}]}, {"week": "W52", "start": "2026-12-21", "end": "2026-12-25", "items": [{"category": "行銷", "text": "【 預熱 】（暫）"}, {"category": "研究", "text": "【 預熱 】（暫）"}, {"category": "老師", "text": "【 預熱 】（暫）"}]}, {"week": "W53", "start": "2026-12-28", "end": "2027-01-01", "items": [{"category": "行銷", "text": "【 開賣 】（暫）"}, {"category": "研究", "text": "【 開賣 】（暫）"}, {"category": "老師", "text": "【 開賣 】（暫）"}]}];
-const SOURCE_NOTES=[{"id": "n1", "week": "W39", "date": "2026-09-23", "text": "9/23 預留蔡松彥影音需求調整", "start": "2026-09-21", "end": "2026-09-25"}, {"id": "n2", "week": "W42", "date": null, "text": "蔡松彥再行銷預熱周！", "start": "2026-10-12", "end": "2026-10-16"}, {"id": "n3", "week": "W43", "date": null, "text": "蔡松彥再行銷開賣周！", "start": "2026-10-19", "end": "2026-10-23"}];
-const STORAGE_KEY='ember-project-schedule-v1';
-const SUPABASE_CONFIG_KEY='ember-project-schedule-supabase-v1';
-const DEFAULT_SUPABASE_CONFIG={url:'https://tqpyhgsmliwwxxbrctdk.supabase.co',key:'sb_publishable_XNZQrshFUCpcRmZHqwV0_Q_wfznQHde',projectId:'kingfish-vlog',redirectUrl:''};
-let events=[];
-let currentView='calendar';
-let filter='全部';
-let query='';
-let supabaseConfig=loadSupabaseConfig();
-let supabaseClient=null;
-let authSubscription=null;
-let scheduleChannel=null;
-let currentUser=null;
-let remoteReady=false;
-let suppressRemoteReload=false;
-const minDate='2026-09-21', maxDate='2027-01-29';
-let cursor=new Date('2026-09-01T00:00:00');
-function loadEvents(){try{const raw=localStorage.getItem(STORAGE_KEY);if(raw) return JSON.parse(raw)}catch(e){} return structuredClone(INITIAL_EVENTS)}
-function saveEvents(){localStorage.setItem(STORAGE_KEY,JSON.stringify(events))}
-function loadSupabaseConfig(){try{const saved=JSON.parse(localStorage.getItem(SUPABASE_CONFIG_KEY)||'{}');return {url:saved.url||DEFAULT_SUPABASE_CONFIG.url,key:saved.key||DEFAULT_SUPABASE_CONFIG.key,projectId:saved.projectId||DEFAULT_SUPABASE_CONFIG.projectId,redirectUrl:saved.redirectUrl||DEFAULT_SUPABASE_CONFIG.redirectUrl}}catch(e){return {...DEFAULT_SUPABASE_CONFIG}}}
-function saveSupabaseConfig(){localStorage.setItem(SUPABASE_CONFIG_KEY,JSON.stringify(supabaseConfig))}
-function hasSupabaseConfig(){return Boolean(supabaseConfig.url&&supabaseConfig.key&&supabaseConfig.projectId)}
-function remoteCanRead(){return Boolean(supabaseClient&&supabaseConfig.projectId)}
-function remoteCanWrite(){return Boolean(supabaseClient&&currentUser&&supabaseConfig.projectId)}
-function setSyncStatus(message,state='warn'){const el=document.getElementById('syncStatus');if(!el)return;el.textContent=message;el.dataset.state=state}
-function hydrateSupabaseFields(){const url=document.getElementById('sbUrl'),key=document.getElementById('sbKey'),projectId=document.getElementById('sbProjectId'),redirectUrl=document.getElementById('sbRedirectUrl');if(url)url.value=supabaseConfig.url||DEFAULT_SUPABASE_CONFIG.url;if(key)key.value=supabaseConfig.key||DEFAULT_SUPABASE_CONFIG.key;if(projectId)projectId.value=supabaseConfig.projectId||DEFAULT_SUPABASE_CONFIG.projectId;if(redirectUrl)redirectUrl.value=supabaseConfig.redirectUrl||''}
-function readSupabaseFields(){supabaseConfig={url:document.getElementById('sbUrl')?.value.trim()||DEFAULT_SUPABASE_CONFIG.url,key:document.getElementById('sbKey')?.value.trim()||DEFAULT_SUPABASE_CONFIG.key,projectId:document.getElementById('sbProjectId')?.value.trim()||DEFAULT_SUPABASE_CONFIG.projectId,redirectUrl:document.getElementById('sbRedirectUrl')?.value.trim()||''};saveSupabaseConfig();return hasSupabaseConfig()}
-function updateEditModeUI(){const canWrite=remoteCanWrite();document.body.classList.toggle('readonly',!canWrite);document.getElementById('supabaseSection')?.classList.toggle('is-hidden',Boolean(currentUser));document.getElementById('addSection')?.classList.toggle('is-hidden',!canWrite);document.getElementById('exitEditBtn')?.classList.toggle('is-hidden',!currentUser)}
-function initSupabaseClient(){if(!hasSupabaseConfig())return false;if(!window.supabase?.createClient){setSyncStatus('找不到 supabase-js，請確認網路或 CDN 是否被擋。','error');return false}supabaseClient=window.supabase.createClient(supabaseConfig.url,supabaseConfig.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'implicit'}});if(authSubscription?.unsubscribe)authSubscription.unsubscribe();const sub=supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentUser=session?.user||null;updateAuthStateLabel();updateEditModeUI();if(remoteReady){await loadRemoteEvents({quiet:true});subscribeToRemoteChanges()}});authSubscription=sub?.data?.subscription||null;return true}
-function updateAuthStateLabel(){const email=currentUser?.email;const state=email?'ok':'ok';setSyncStatus(email?'Supabase 已登入：'+email:'Supabase 已連線：目前為唯讀模式。登入後可編輯。',state);updateEditModeUI()}
-function toDbEvent(e,index=0){return {id:String(e.id),project_id:supabaseConfig.projectId,date:e.date,title:e.title,category:e.category,week:e.week||sourceWeekForDate(e.date),original_date:e.originalDate||e.original_date||e.date,sort_order:Number.isFinite(e.sortOrder)?e.sortOrder:index,created_by:currentUser?.id||null,updated_at:new Date().toISOString()}}
-function fromDbEvent(row){return {id:row.id,date:row.date,title:row.title,category:row.category,week:row.week||sourceWeekForDate(row.date),originalDate:row.original_date||row.date,sortOrder:row.sort_order??0}}
-function remoteErrorText(error){return error?.message||'未知錯誤'}
-function cleanAuthRedirectUrl(){try{const url=new URL(window.location.href);['code','error','error_code','error_description'].forEach(k=>url.searchParams.delete(k));url.hash='';window.history.replaceState({},document.title,url.toString())}catch(e){}}
-function getAuthRedirectError(){const hashParams=new URLSearchParams((window.location.hash||'').replace(/^#/,''));const searchParams=new URLSearchParams(window.location.search||'');const code=hashParams.get('error_code')||searchParams.get('error_code')||hashParams.get('error')||searchParams.get('error');const desc=hashParams.get('error_description')||searchParams.get('error_description');return code?decodeURIComponent((desc||code).replace(/\+/g,' ')):''}
-function getCleanCurrentUrl(){try{const url=new URL(window.location.href);['code','error','error_code','error_description'].forEach(k=>url.searchParams.delete(k));url.hash='';return url.toString()}catch(e){return window.location.href.split('#')[0]}}
-async function handleAuthRedirect(){const redirectError=getAuthRedirectError();if(redirectError){setSyncStatus('登入回跳失敗：'+redirectError,'error');cleanAuthRedirectUrl();return false}const code=new URLSearchParams(window.location.search||'').get('code');if(code&&supabaseClient?.auth?.exchangeCodeForSession){const {data,error}=await supabaseClient.auth.exchangeCodeForSession(code);if(error){setSyncStatus('登入驗證失敗：'+remoteErrorText(error),'error');return false}currentUser=data?.session?.user||null;cleanAuthRedirectUrl();return true}return true}
-async function connectSupabase(showToast=true){if(!readSupabaseFields()){setSyncStatus('Supabase 設定不完整，無法讀取雲端資料。','error');events=[];renderAll();return false}if(!initSupabaseClient())return false;const handled=await handleAuthRedirect();if(!handled)return false;await new Promise(resolve=>setTimeout(resolve,80));const {data,error}=await supabaseClient.auth.getSession();if(error){setSyncStatus('Supabase Auth 讀取失敗：'+remoteErrorText(error),'error');return false}currentUser=data?.session?.user||null;remoteReady=true;updateAuthStateLabel();cleanAuthRedirectUrl();await loadRemoteEvents({quiet:true});subscribeToRemoteChanges();if(showToast)toast(currentUser?'已進入編輯模式':'已讀取 Supabase，目前為唯讀模式');return true}
-async function sendMagicLink(){if(!readSupabaseFields()){setSyncStatus('請先填 Supabase URL、publishable key 與 project id。','warn');return}if(!supabaseClient&&!initSupabaseClient())return;const email=document.getElementById('loginEmail')?.value.trim();if(!email){toast('請輸入登入 Email');return}const redirectTo=supabaseConfig.redirectUrl||getCleanCurrentUrl();const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo,shouldCreateUser:true}});if(error){setSyncStatus('登入信寄送失敗：'+remoteErrorText(error),'error');return}await customAlert('已寄出登入連結。\n\n回跳網址：'+redirectTo+'\n\n請確認這個網址有加入 Supabase Auth 的 Redirect URLs；若目前是 file:// 或 ChatGPT sandbox，請改用 GitHub Pages 或 localhost。')}
-async function signOutSupabase(){if(!supabaseClient)return;await supabaseClient.auth.signOut();currentUser=null;remoteReady=false;if(scheduleChannel){await supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}setSyncStatus('已登出，現在為唯讀模式。','ok');updateEditModeUI();await loadRemoteEvents({quiet:true});toast('已登出編輯模式')}
-async function loadRemoteEvents(opts={}){if(!remoteCanRead())return false;const {data,error}=await supabaseClient.from('schedule_events').select('id,project_id,date,title,category,week,original_date,sort_order').eq('project_id',supabaseConfig.projectId).order('date',{ascending:true}).order('sort_order',{ascending:true});if(error){events=[];renderAll();setSyncStatus('讀取 Supabase 失敗：'+remoteErrorText(error),'error');return false}events=(data||[]).map(fromDbEvent);saveEvents();renderAll();if(!opts.quiet)setSyncStatus(currentUser?'Supabase 已同步，編輯模式中。':'Supabase 已同步，目前為唯讀模式。','ok');return true}
-async function replaceRemoteEvents(list){if(!remoteCanWrite())return false;suppressRemoteReload=true;const {error:delError}=await supabaseClient.from('schedule_events').delete().eq('project_id',supabaseConfig.projectId);if(delError){suppressRemoteReload=false;setSyncStatus('清空 Supabase 排程失敗：'+remoteErrorText(delError),'error');return false}const rows=list.map((e,i)=>toDbEvent(e,i));if(rows.length){const {error}=await supabaseClient.from('schedule_events').upsert(rows,{onConflict:'project_id,id'});if(error){suppressRemoteReload=false;setSyncStatus('寫入 Supabase 失敗：'+remoteErrorText(error),'error');return false}}suppressRemoteReload=false;return true}
-async function uploadCurrentSchedule(){if(!supabaseClient||!currentUser){await connectSupabase(false)}if(!remoteCanWrite()){toast('請先連線並登入 Supabase');return}if(!(await customConfirm('要把目前畫面上的排程上傳到 Supabase 嗎？\n\n這會取代此 project id 底下既有的 schedule_events。')))return;const ok=await replaceRemoteEvents(events.length?events:structuredClone(INITIAL_EVENTS));if(ok){await loadRemoteEvents({keepLocalWhenEmpty:true,quiet:true});toast('已上傳到 Supabase')}}
-function subscribeToRemoteChanges(){if(!supabaseClient||!supabaseConfig.projectId)return;if(scheduleChannel){supabaseClient.removeChannel(scheduleChannel);scheduleChannel=null}scheduleChannel=supabaseClient.channel('schedule-events-'+supabaseConfig.projectId).on('postgres_changes',{event:'*',schema:'public',table:'schedule_events',filter:'project_id=eq.'+supabaseConfig.projectId},async()=>{if(suppressRemoteReload)return;await loadRemoteEvents({quiet:true})}).subscribe()}
-function showModal(message,buttons){
-  return new Promise(resolve=>{
-    const overlay=document.createElement('div');overlay.className='modal-overlay';
-    const box=document.createElement('div');box.className='modal-box';
-    const msg=document.createElement('div');msg.className='modal-msg';msg.textContent=message;box.appendChild(msg);
-    const row=document.createElement('div');row.className='modal-btns';
-    buttons.forEach(b=>{
-      const btn=document.createElement('button');btn.className='btn'+(b.primary?' primary':'');btn.textContent=b.label;
-      btn.addEventListener('click',()=>{overlay.remove();resolve(b.value)});
-      row.appendChild(btn);
-    });
-    box.appendChild(row);overlay.appendChild(box);document.body.appendChild(overlay);
-  });
-}
-function customConfirm(message){return showModal(message,[{label:'取消',value:false},{label:'確定',value:true,primary:true}])}
-function customAlert(message){return showModal(message,[{label:'知道了',value:true,primary:true}])}
-function toast(message){
-  const el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);
-  requestAnimationFrame(()=>el.classList.add('show'));
-  setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},2600);
-}
-async function resetEvents(){if(!(await customConfirm('要還原成試算表原始排程嗎？目前拖曳調整會被清除。'))) return;const fresh=structuredClone(INITIAL_EVENTS);if(remoteCanWrite()){const ok=await replaceRemoteEvents(fresh);if(!ok)return}events=fresh;saveEvents();renderAll();toast('已還原原始排程')}
-function icsEscape(s){return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n')}
-function icsPad(n){return String(n).padStart(2,'0')}
-function icsDateStr(dateStr){return dateStr.replace(/-/g,'')}
-function addDaysStr(dateStr,days){const d=new Date(dateStr+'T00:00:00');d.setDate(d.getDate()+days);return iso(d)}
-function buildICS(){
-  const now=new Date();
-  const dtstamp=now.getUTCFullYear()+icsPad(now.getUTCMonth()+1)+icsPad(now.getUTCDate())+'T'+icsPad(now.getUTCHours())+icsPad(now.getUTCMinutes())+icsPad(now.getUTCSeconds())+'Z';
-  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Ember Studio//專案時程//ZH-TW','CALSCALE:GREGORIAN'];
-  const sorted=[...events].sort((a,b)=>a.date.localeCompare(b.date));
-  sorted.forEach(e=>{
-    lines.push('BEGIN:VEVENT');
-    lines.push('UID:'+e.id+'-ember-schedule@eritung');
-    lines.push('DTSTAMP:'+dtstamp);
-    lines.push('DTSTART;VALUE=DATE:'+icsDateStr(e.date));
-    lines.push('DTEND;VALUE=DATE:'+icsDateStr(addDaysStr(e.date,1)));
-    lines.push('SUMMARY:'+icsEscape(e.title));
-    lines.push('CATEGORIES:'+icsEscape(e.category));
-    lines.push('DESCRIPTION:'+icsEscape(`分類：${e.category}／週次：${e.week}`));
-    lines.push('END:VEVENT');
-  });
-  lines.push('END:VCALENDAR');
-  return lines.join('\r\n');
-}
-async function exportToGoogleCalendar(){
-  const ics=buildICS();
-  // 在 claude.ai 平台上執行時，走平台的下載功能（但它不開放 .ics 副檔名，只能先存成 .txt 再手動改名）
-  if(typeof window.claude?.use==='function'){
-    let downloads=null; try{ downloads=await window.claude.use('downloads') }catch(e){ downloads=null }
-    if(downloads){
-      try{
-        await downloads.save({filename:'專案時程.txt', data: ics});
-        await customAlert('已下載「專案時程.txt」（共 '+events.length+' 筆）。\n\n因為平台下載功能不支援 .ics 副檔名，請先把檔名結尾的 .txt 改成 .ics（例如「專案時程.ics」），再到 Google 日曆網頁版 → 設定 → 匯入及匯出 → 匯入 → 選擇這個檔案上傳。');
-        return;
-      }catch(err){ /* 平台下載失敗，往下改用瀏覽器直接下載 */ }
-    }
-  }
-  // 離線開啟這個 HTML 檔案（不受平台副檔名限制）時，直接下載正確的 .ics 檔案
-  try{
-    const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download='project-schedule.ics';document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),4000);
-    await customAlert('已下載「project-schedule.ics」（共 '+events.length+' 筆）。\n\n打開 Google 日曆網頁版 → 設定 → 匯入及匯出 → 匯入 → 選擇這個檔案上傳即可。');
-  }catch(err){
-    copyICSFallback();
-  }
-}
-async function copyICSFallback(){
-  const ics=buildICS();
-  try{
-    await navigator.clipboard.writeText(ics);
-    await customAlert('下載未成功，已改為複製 ICS 內容到剪貼簿。\n\n請貼到純文字編輯器（記事本／TextEdit），存成「專案時程.ics」，再到 Google 日曆設定 → 匯入及匯出 → 匯入 上傳。');
-  }catch(err){
-    await customAlert('自動下載與複製都失敗了，請截圖告訴我，我再想別的辦法。');
-  }
-}
-function buildBackupJSON(){return JSON.stringify({exportedAt:new Date().toISOString(),source:'專案時程',events},null,2)}
-async function exportDataBackup(){
-  const data=buildBackupJSON();
-  if(typeof window.claude?.use==='function'){
-    let downloads=null; try{ downloads=await window.claude.use('downloads') }catch(e){ downloads=null }
-    if(downloads){
-      try{
-        await downloads.save({filename:'schedule-backup.json', data});
-        toast('已匯出目前排程（'+events.length+' 筆）');
-        return;
-      }catch(err){ /* 平台下載失敗，往下改用瀏覽器直接下載 */ }
-    }
-  }
-  try{
-    const blob=new Blob([data],{type:'application/json;charset=utf-8'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download='schedule-backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),4000);
-    toast('已下載 schedule-backup.json（'+events.length+' 筆）');
-  }catch(err){
-    await customAlert('匯出失敗，請截圖告訴我，我再想別的辦法。');
-  }
-}
-function importDataBackup(file){
-  const reader=new FileReader();
-  reader.onload=async ()=>{
-    let list;
-    try{
-      const parsed=JSON.parse(reader.result);
-      list=Array.isArray(parsed)?parsed:parsed.events;
-      if(!Array.isArray(list)||!list.length) throw new Error('empty');
-      const valid=list.every(e=>e&&typeof e.id==='string'&&typeof e.date==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&typeof e.title==='string'&&typeof e.category==='string');
-      if(!valid) throw new Error('format');
-    }catch(err){
-      await customAlert('這個檔案格式看起來不對，請確認是從「匯出目前排程」下載的備份檔（JSON）。');
-      return;
-    }
-    if(!(await customConfirm('要匯入這份排程嗎？目前畫面上顯示的排程會被取代（共 '+list.length+' 筆）。'))) return;
-    const imported=list.map((e,i)=>({id:e.id,date:e.date,title:e.title,category:e.category,week:e.week||sourceWeekForDate(e.date),originalDate:e.originalDate||e.date,sortOrder:i}));
-    if(remoteCanWrite()){const ok=await replaceRemoteEvents(imported);if(!ok)return}
-    events=imported;
-    saveEvents();renderAll();
-    toast('已匯入排程（'+events.length+' 筆）');
-  };
-  reader.onerror=async ()=>{ await customAlert('讀取檔案失敗，請重試一次。'); };
-  reader.readAsText(file);
-}
-function isoWeekYear(dateStr){const d=new Date(dateStr+'T00:00:00');const day=(d.getDay()+6)%7;const thursday=new Date(d);thursday.setDate(d.getDate()-day+3);return thursday.getFullYear()}
-async function addEvent(){
-  if(!remoteCanWrite()){toast('請先登入後再新增活動');return}
-  const dateEl=document.getElementById('addDate'),titleEl=document.getElementById('addTitle'),catEl=document.getElementById('addCategory');
-  const date=dateEl.value,title=titleEl.value.trim(),category=catEl.value;
-  if(!date){toast('請選擇日期');return}
-  if(!title){toast('請輸入任務標題');return}
-  const localEvent={id:'c'+Date.now()+Math.floor(Math.random()*1000),date,title,category,week:sourceWeekForDate(date),originalDate:date,sortOrder:events.filter(e=>e.date===date).length};
-  if(remoteCanWrite()){
-    const {data,error}=await supabaseClient.from('schedule_events').insert(toDbEvent(localEvent,localEvent.sortOrder)).select('id,project_id,date,title,category,week,original_date,sort_order').single();
-    if(error){setSyncStatus('新增失敗：'+remoteErrorText(error),'error');return}
-    events.push(fromDbEvent(data));
-  }else{
-    events.push(localEvent);
-  }
-  saveEvents();titleEl.value='';renderAll();
-  toast('已新增「'+title+'」');
-}
-async function deleteEvent(id){
-  if(!remoteCanWrite()){toast('請先登入後再刪除活動');return}
-  const e=events.find(x=>x.id===id);if(!e)return;
-  if(!(await customConfirm('要刪除「'+e.title+'」嗎？'))) return;
-  if(remoteCanWrite()){
-    const {error}=await supabaseClient.from('schedule_events').delete().eq('project_id',supabaseConfig.projectId).eq('id',id);
-    if(error){setSyncStatus('刪除失敗：'+remoteErrorText(error),'error');return}
-  }
-  events=events.filter(x=>x.id!==id);saveEvents();renderAll();
-  toast('已刪除');
-}
-function showDateModal(ev){
-  return new Promise(resolve=>{
-    const overlay=document.createElement('div');overlay.className='modal-overlay';
-    const box=document.createElement('div');box.className='modal-box';
-    const title=document.createElement('div');title.className='modal-msg';title.style.fontWeight='600';title.style.marginBottom='10px';title.textContent=ev.title;
-    const input=document.createElement('input');input.type='date';input.id='dateEditInput';input.className='add-field';input.value=ev.date;
-    box.appendChild(title);box.appendChild(input);
-    const row=document.createElement('div');row.className='modal-btns';
-    const cancelBtn=document.createElement('button');cancelBtn.className='btn';cancelBtn.textContent='取消';
-    const okBtn=document.createElement('button');okBtn.className='btn primary';okBtn.textContent='移到這天';
-    cancelBtn.addEventListener('click',()=>{overlay.remove();resolve(null)});
-    okBtn.addEventListener('click',()=>{overlay.remove();resolve(input.value||null)});
-    row.appendChild(cancelBtn);row.appendChild(okBtn);
-    box.appendChild(row);overlay.appendChild(box);document.body.appendChild(overlay);
-    input.focus();
-  });
-}
-async function openDateEditor(id){
-  if(!remoteCanWrite()){return}
-  const ev=events.find(x=>x.id===id);if(!ev)return;
-  const newDate=await showDateModal(ev);
-  if(newDate && newDate!==ev.date){moveEvent(id,newDate);toast('已移到 '+fmtDate(newDate,true))}
-}
-function fmtDate(s,withYear=false){const d=new Date(s+'T00:00:00');return new Intl.DateTimeFormat('zh-TW',{month:'numeric',day:'numeric',weekday:'short',...(withYear?{year:'numeric'}:{})}).format(d)}
+const SUPABASE_URL='https://tqpyhgsmliwwxxbrctdk.supabase.co';
+const SUPABASE_KEY='sb_publishable_XNZQrshFUCpcRmZHqwV0_Q_wfznQHde';
+const PROJECT_ID='kingfish-vlog';
+const cats=['全部','行銷','研究','老師','假日','備註'];
+const catColors={行銷:'#C2410C',研究:'#A16207',老師:'#7C3AED',假日:'#DC2626',備註:'#F59E0B'};
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{detectSessionInUrl:true,flowType:'implicit',persistSession:true,autoRefreshToken:true}});
+let session=null,events=[],currentView='calendar',filter='全部',query='',cursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function iso(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
-function visibleEvent(e){const catOk=filter==='全部'||e.category===filter;const q=query.trim().toLowerCase();const qOk=!q||(`${e.title} ${e.category} ${e.week}`).toLowerCase().includes(q);return catOk&&qOk}
-function sourceWeekForDate(date){const t=new Date(date+'T00:00:00');const w=WEEK_SUMMARIES.find(w=>t>=new Date(w.start+'T00:00:00')&&t<=new Date(w.end+'T00:00:00'));if(w)return w.week; const monday=new Date(t); const day=(monday.getDay()+6)%7;monday.setDate(monday.getDate()-day); const jan4=new Date(monday.getFullYear(),0,4);const jan4Mon=new Date(jan4);jan4Mon.setDate(jan4.getDate()-((jan4.getDay()+6)%7));const n=Math.floor((monday-jan4Mon)/604800000)+1;return 'W'+n}
-async function moveEvent(id,newDate){if(!remoteCanWrite()){await loadRemoteEvents({quiet:true});toast('請先登入後再移動活動');return}const e=events.find(x=>x.id===id);if(!e)return;const oldDate=e.date,oldWeek=e.week;e.date=newDate;e.week=sourceWeekForDate(newDate);saveEvents();renderAll();if(remoteCanWrite()){const {error}=await supabaseClient.from('schedule_events').update({date:newDate,week:e.week,updated_at:new Date().toISOString()}).eq('project_id',supabaseConfig.projectId).eq('id',id);if(error){e.date=oldDate;e.week=oldWeek;saveEvents();renderAll();setSyncStatus('更新日期失敗：'+remoteErrorText(error),'error')}}}
-function setView(v){currentView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===(v==='calendar'?'calendarView':'listView')));document.querySelectorAll('.nav-btn[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));document.getElementById('viewTitle').textContent=v==='calendar'?'專案時程｜行事曆':'專案時程｜清單';document.getElementById('toggleBtn').textContent=v==='calendar'?'切換清單':'切換行事曆';document.getElementById('mobileViewBtn').textContent=v==='calendar'?'☷':'▦';renderAll()}
-function renderAll(){renderCalendar();renderList();const shown=events.filter(visibleEvent).length;document.getElementById('countLabel').textContent=`顯示 ${shown} / ${events.length} 個日程`;document.getElementById('prevBtn').style.visibility=currentView==='calendar'?'visible':'hidden';document.getElementById('nextBtn').style.visibility=currentView==='calendar'?'visible':'hidden';document.getElementById('todayBtn').style.visibility=currentView==='calendar'?'visible':'hidden'}
-
-function eventHTML(e,mode='cal'){
-  const yw=isoWeekYear(e.date)+' · '+e.week;
-  const del=remoteCanWrite()?`<span class="evt-del" data-id="${e.id}" title="刪除">✕</span>`:'';
-  if(mode==='cal') return `<div class="event" data-id="${e.id}" data-cat="${e.category}"><div class="event-row"><span>${esc(e.title)}</span>${del}</div><div class="meta">${esc(e.category)} · ${esc(yw)}</div></div>`;
-  return `<div class="list-card" data-id="${e.id}" data-cat="${e.category}"><span class="list-card-title">${esc(e.title)}</span>${del}</div>`;
-}
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function startOfToday(){const d=new Date();d.setHours(0,0,0,0);return d}
-function renderCalendar(){
-  const y=cursor.getFullYear(),m=cursor.getMonth();document.getElementById('periodLabel').textContent=`${y} 年 ${m+1} 月`;
-  const first=new Date(y,m,1), start=new Date(first);start.setDate(1-first.getDay());const end=new Date(start);end.setDate(start.getDate()+41);
-  const today0=startOfToday();
-  const grid=document.getElementById('calGrid');let out='';
-  for(let rowStart=new Date(start);rowStart<=end;rowStart.setDate(rowStart.getDate()+7)){
-    const rowEnd=new Date(rowStart);rowEnd.setDate(rowStart.getDate()+6);
-    if(rowEnd<today0) continue; // 隱藏已完全過去的整週
-    for(let d=new Date(rowStart);d<=rowEnd;d.setDate(d.getDate()+1)){const ds=iso(d), inMonth=d.getMonth()===m;const dayEvents=events.filter(e=>e.date===ds&&visibleEvent(e));const notes=SOURCE_NOTES.filter(n=>n.date===ds);const isToday=ds===iso(new Date());out+=`<div class="day ${inMonth?'':'out'} ${isToday?'today':''}" data-date="${ds}"><div class="day-head"><span class="day-num">${d.getDate()}</span><span class="day-count">${dayEvents.length?dayEvents.length+' 項':''}</span></div>${notes.map(n=>`<div class="note-band">${esc(n.text)}</div>`).join('')}<div class="day-events">${dayEvents.map(e=>eventHTML(e,'cal')).join('')}</div></div>`}
-  }
-  grid.innerHTML=out||'<div class="empty">本月已無未來週次</div>';initSortables('.day-events',true);
-}
-function renderList(){
- const root=document.getElementById('listRoot');const weeks=[];
- for(const w of WEEK_SUMMARIES){if(!weeks.some(x=>x.week===w.week))weeks.push(w)}
- // include W43 etc that may have no summary but do have dates/events
- for(const e of events){if(!weeks.some(x=>x.week===e.week)){const d=new Date(e.date+'T00:00:00');const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()+6)%7));const fri=new Date(mon);fri.setDate(mon.getDate()+4);weeks.push({week:e.week,start:iso(mon),end:iso(fri),items:[]})}}
- const today0=startOfToday();
- weeks.sort((a,b)=>a.start.localeCompare(b.start));let html='';
- for(const w of weeks){if(new Date(w.end+'T00:00:00')<today0) continue; // 隱藏已完全過去的週次
- const weekEvents=events.filter(e=>e.date>=w.start&&e.date<=w.end&&visibleEvent(e));const noteItems=SOURCE_NOTES.filter(n=>n.week===w.week);const searchInSummary=!query||((w.items||[]).some(i=>i.text.toLowerCase().includes(query.toLowerCase())));if(!weekEvents.length&&!searchInSummary&&query)continue;
- html+=`<section class="week-block"><div class="week-head"><div><div class="week-title"><h3>${isoWeekYear(w.start)} · ${esc(w.week)}</h3><span class="week-range">${fmtDate(w.start)} – ${fmtDate(w.end)}</span></div>${(w.items||[]).length?`<div class="week-summary">${w.items.map(i=>`<span class="summary-pill">${esc(i.category)} · ${esc(i.text)}</span>`).join('')}</div>`:''}</div>${noteItems.length?`<div class="muted">${noteItems.map(n=>'※ '+esc(n.text)).join('<br>')}</div>`:''}</div>`;
- for(let d=new Date(w.start+'T00:00:00');d<=new Date(w.end+'T00:00:00');d.setDate(d.getDate()+1)){const ds=iso(d), de=events.filter(e=>e.date===ds&&visibleEvent(e));if(!de.length)continue;html+=`<div class="date-row"><div class="date-label">${fmtDate(ds)}</div><div class="date-drop" data-date="${ds}">${de.map(e=>eventHTML(e,'list')).join('')}</div></div>`}
- html+='</section>'}
- root.innerHTML=html||'<div class="empty">沒有符合條件的日程</div>';initSortables('.date-drop',false);
-}
-function initSortables(selector,isCalendar){if(!window.Sortable||!remoteCanWrite())return;document.querySelectorAll(selector).forEach(el=>{new Sortable(el,{group:'schedule',animation:160,delay:120,delayOnTouchOnly:true,touchStartThreshold:4,ghostClass:'drag-ghost',chosenClass:'drag-chosen',fallbackOnBody:true,swapThreshold:.6,filter:'.evt-del',preventOnFilter:false,onAdd(evt){const card=evt.item;const parent=isCalendar?card.closest('.day'):card.closest('.date-drop');const date=parent?.dataset.date;if(date)moveEvent(card.dataset.id,date)},onUpdate(evt){saveEvents();const parent=evt.item.closest('.day,.date-drop');const date=parent?.dataset.date;if(date)saveRemoteSortOrder(date)}})})}
-async function saveRemoteSortOrder(date){if(!remoteCanWrite())return;const dayEvents=events.filter(e=>e.date===date);dayEvents.forEach((e,i)=>e.sortOrder=i);saveEvents();await Promise.all(dayEvents.map((e,i)=>supabaseClient.from('schedule_events').update({sort_order:i,updated_at:new Date().toISOString()}).eq('project_id',supabaseConfig.projectId).eq('id',e.id)))}
-
-document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
-document.getElementById('toggleBtn').addEventListener('click',()=>setView(currentView==='calendar'?'list':'calendar'));
-document.getElementById('mobileViewBtn').addEventListener('click',()=>setView(currentView==='calendar'?'list':'calendar'));
-document.getElementById('resetBtn').addEventListener('click',resetEvents);
-document.getElementById('exportIcsBtn').addEventListener('click',exportToGoogleCalendar);
-document.getElementById('exportDataBtn').addEventListener('click',exportDataBackup);
-document.getElementById('importDataBtn').addEventListener('click',()=>document.getElementById('importFileInput').click());
-document.getElementById('importFileInput').addEventListener('change',e=>{
-  const file=e.target.files[0];
-  if(file) importDataBackup(file);
-  e.target.value='';
-});
-document.getElementById('addEventBtn').addEventListener('click',addEvent);
-document.addEventListener('click',e=>{const delBtn=e.target.closest('.evt-del');if(delBtn){e.stopPropagation();deleteEvent(delBtn.dataset.id)}});
-document.addEventListener('click',e=>{
-  if(e.target.closest('.evt-del')) return;
-  const card=e.target.closest('.event, .list-card');
-  if(card) openDateEditor(card.dataset.id);
-});
-['mousedown','pointerdown','touchstart'].forEach(evtName=>{
-  document.addEventListener(evtName,e=>{if(e.target.closest('.evt-del'))e.stopPropagation()},true);
-});
-document.getElementById('prevBtn').addEventListener('click',()=>{cursor=new Date(cursor.getFullYear(),cursor.getMonth()-1,1);renderCalendar()});
-document.getElementById('nextBtn').addEventListener('click',()=>{cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,1);renderCalendar()});
-document.getElementById('todayBtn').addEventListener('click',()=>{const now=new Date();cursor=(now>=new Date(minDate)&&now<=new Date(maxDate))?new Date(now.getFullYear(),now.getMonth(),1):new Date('2026-09-01');renderCalendar()});
-document.getElementById('searchInput').addEventListener('input',e=>{query=e.target.value;renderAll()});
-document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');filter=c.dataset.filter;renderAll()}));
-document.getElementById('connectSupabaseBtn')?.addEventListener('click',()=>connectSupabase(true));
-document.getElementById('loginBtn')?.addEventListener('click',sendMagicLink);
-document.getElementById('signOutBtn')?.addEventListener('click',signOutSupabase);
-document.getElementById('exitEditBtn')?.addEventListener('click',signOutSupabase);
-document.getElementById('uploadRemoteBtn')?.addEventListener('click',uploadCurrentSchedule);
-async function boot(){hydrateSupabaseFields();document.body.classList.add('readonly');setView('calendar');const hasAuthCallback=Boolean(window.location.hash||new URLSearchParams(window.location.search||'').get('code')||new URLSearchParams(window.location.search||'').get('error'));if(hasSupabaseConfig()){await connectSupabase(false)}else if(hasAuthCallback){setSyncStatus('收到登入回跳，但 Supabase 設定不完整。','warn')}else{events=[];renderAll();setSyncStatus('Supabase 設定不完整，無法顯示雲端資料。','error')}}
+function fmtDate(s,withYear=false){return new Intl.DateTimeFormat('zh-TW',{month:'numeric',day:'numeric',weekday:'short',...(withYear?{year:'numeric'}:{})}).format(new Date(s+'T00:00:00'))}
+function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),300)},2400)}
+function setStatus(msg,type=''){const el=$('statusLine');el.textContent=msg;el.className='status '+type}
+function canWrite(){return Boolean(session?.user)}
+function sourceWeekForDate(date){const t=new Date(date+'T00:00:00');const d=(t.getDay()+6)%7;const th=new Date(t);th.setDate(t.getDate()-d+3);const first=new Date(th.getFullYear(),0,4);const firstMon=new Date(first);firstMon.setDate(first.getDate()-((first.getDay()+6)%7));return 'W'+(Math.floor((th-firstMon)/604800000)+1)}
+function isoWeekYear(date){const t=new Date(date+'T00:00:00');const d=(t.getDay()+6)%7;const th=new Date(t);th.setDate(t.getDate()-d+3);return th.getFullYear()}
+function fromDb(r){return{id:r.id,date:r.date,title:r.title,category:r.category,week:r.week||sourceWeekForDate(r.date),originalDate:r.original_date||r.date,sortOrder:r.sort_order??0}}
+function toDb(e,sort=e.sortOrder??0){return{project_id:PROJECT_ID,id:e.id,date:e.date,title:e.title,category:e.category,week:e.week||sourceWeekForDate(e.date),original_date:e.originalDate||e.date,sort_order:sort,updated_at:new Date().toISOString()}}
+function renderSetup(){const legend=$('legend'),chips=$('chips'),addCat=$('addCategory');legend.innerHTML='';chips.innerHTML='';addCat.innerHTML='';cats.forEach(cat=>{if(cat!=='全部'){legend.insertAdjacentHTML('beforeend',`<div class="legend-row"><span class="dot" style="background:${catColors[cat]}"></span>${cat}</div>`);addCat.insertAdjacentHTML('beforeend',`<option value="${cat}">${cat}</option>`)}chips.insertAdjacentHTML('beforeend',`<button class="chip ${cat==='全部'?'active':''}" data-filter="${cat}">${cat}</button>`)});document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');filter=c.dataset.filter;renderAll()})}
+async function loadEvents(){const {data,error}=await supabase.from('schedule_events').select('id,project_id,date,title,category,week,original_date,sort_order').eq('project_id',PROJECT_ID).order('date',{ascending:true}).order('sort_order',{ascending:true});if(error){setStatus('讀取失敗：'+error.message,'err');events=[]}else{events=(data||[]).map(fromDb);setStatus(canWrite()?`已登入：${session.user.email}`:`已同步 ${events.length} 筆 Supabase 時程`,'ok')}renderAll()}
+async function refreshSession(){const {data}=await supabase.auth.getSession();session=data.session;document.body.classList.toggle('readonly',!canWrite());$('loginSection').classList.toggle('hidden',canWrite());$('modeText').textContent=canWrite()?`編輯模式：${session.user.email}`:'公開檢視模式';$('helpText').textContent=canWrite()?'拖曳可移動；點卡片可編輯名稱、日期與分類':'公開讀取 Supabase；登入後可編輯';renderAll()}
+async function signIn(){const email=$('loginEmail').value.trim();if(!email){toast('請輸入 Email');return}const redirectTo=location.href.split('#')[0];const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:redirectTo}});if(error)setStatus('登入連結寄送失敗：'+error.message,'err');else setStatus('已寄出登入連結，請到信箱點擊。','ok')}
+async function signOut(){await supabase.auth.signOut();session=null;await refreshSession();setStatus('已登出，回到公開檢視模式。','ok')}
+function visible(e){const q=query.trim().toLowerCase();return (filter==='全部'||e.category===filter)&&(!q||`${e.title} ${e.category} ${e.week}`.toLowerCase().includes(q))}
+function eventHTML(e,mode='cal'){const del=canWrite()?`<span class="del" data-id="${esc(e.id)}" title="刪除">✕</span>`:'';if(mode==='cal')return`<div class="event" data-id="${esc(e.id)}" data-cat="${esc(e.category)}"><div class="event-row"><span>${esc(e.title)}</span>${del}</div><div class="meta">${esc(e.category)} · ${isoWeekYear(e.date)} · ${esc(e.week)}</div></div>`;return`<div class="list-card" data-id="${esc(e.id)}" data-cat="${esc(e.category)}"><span class="list-card-title">${esc(e.title)}</span>${del}</div>`}
+function renderCalendar(){const y=cursor.getFullYear(),m=cursor.getMonth();$('periodLabel').textContent=`${y} 年 ${m+1} 月`;const first=new Date(y,m,1),start=new Date(first);start.setDate(1-first.getDay());let out='',today=iso(new Date());for(let i=0;i<42;i++){const d=new Date(start);d.setDate(start.getDate()+i);const ds=iso(d),evs=events.filter(e=>e.date===ds&&visible(e));out+=`<div class="day ${d.getMonth()===m?'':'out'} ${ds===today?'today':''}" data-date="${ds}"><div class="day-head"><span class="day-num">${d.getDate()}</span><span class="day-count">${evs.length?evs.length+' 項':''}</span></div><div class="day-events">${evs.map(e=>eventHTML(e,'cal')).join('')}</div></div>`}$('calGrid').innerHTML=out;initSortables('.day-events',true)}
+function renderList(){const map=new Map();events.filter(visible).forEach(e=>{const key=`${isoWeekYear(e.date)} · ${e.week}`;if(!map.has(key))map.set(key,[]);map.get(key).push(e)});let html='';[...map.entries()].sort((a,b)=>a[1][0].date.localeCompare(b[1][0].date)).forEach(([week,items])=>{html+=`<section class="week-block"><div class="week-title"><h3>${esc(week)}</h3></div>`;const byDate={};items.forEach(e=>(byDate[e.date]??=[]).push(e));Object.keys(byDate).sort().forEach(date=>{html+=`<div class="date-row"><div class="date-label">${fmtDate(date)}</div><div class="date-drop" data-date="${date}">${byDate[date].map(e=>eventHTML(e,'list')).join('')}</div></div>`});html+='</section>'});$('listRoot').innerHTML=html||'<div class="empty">沒有符合條件的日程</div>';initSortables('.date-drop',false)}
+function renderAll(){renderCalendar();renderList();const shown=events.filter(visible).length;$('countLabel').textContent=`顯示 ${shown} / ${events.length} 個日程`;['prevBtn','nextBtn','todayBtn'].forEach(id=>$(id).style.visibility=currentView==='calendar'?'visible':'hidden')}
+function setView(v){currentView=v;document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===(v==='calendar'?'calendarView':'listView')));document.querySelectorAll('.nav-btn[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));$('viewTitle').textContent=v==='calendar'?'專案時程｜行事曆':'專案時程｜清單';$('toggleBtn').textContent=v==='calendar'?'切換清單':'切換行事曆';$('mobileViewBtn').textContent=v==='calendar'?'☷':'▦';renderAll()}
+function initSortables(selector,isCal){if(!window.Sortable||!canWrite())return;document.querySelectorAll(selector).forEach(el=>new Sortable(el,{group:'schedule',animation:160,delay:120,delayOnTouchOnly:true,touchStartThreshold:4,ghostClass:'drag-ghost',chosenClass:'drag-chosen',filter:'.del',preventOnFilter:false,onAdd(evt){const date=(isCal?evt.item.closest('.day'):evt.item.closest('.date-drop'))?.dataset.date;if(date)updateEvent(evt.item.dataset.id,{date})},onUpdate(evt){const date=(isCal?evt.item.closest('.day'):evt.item.closest('.date-drop'))?.dataset.date;if(date)saveSort(date)}}))}
+async function saveSort(date){if(!canWrite())return;const evs=events.filter(e=>e.date===date);evs.forEach((e,i)=>e.sortOrder=i);await Promise.all(evs.map((e,i)=>supabase.from('schedule_events').update({sort_order:i,updated_at:new Date().toISOString()}).eq('project_id',PROJECT_ID).eq('id',e.id)))}
+function modalField(label,el){const w=document.createElement('label');w.className='modal-label';w.innerHTML=`<span>${label}</span>`;w.appendChild(el);return w}
+function editModal(ev){return new Promise(resolve=>{const o=document.createElement('div');o.className='modal-overlay';const b=document.createElement('div');b.className='modal-box';b.innerHTML='<div class="modal-title">編輯活動</div>';const title=document.createElement('input');title.className='field';title.value=ev.title;const date=document.createElement('input');date.type='date';date.className='field';date.value=ev.date;const cat=document.createElement('select');cat.className='field';cats.filter(c=>c!=='全部').forEach(c=>cat.insertAdjacentHTML('beforeend',`<option value="${c}" ${c===ev.category?'selected':''}>${c}</option>`));b.append(modalField('活動名稱',title),modalField('日期',date),modalField('分類標籤',cat));const row=document.createElement('div');row.className='modal-btns';row.innerHTML='<button class="btn" id="mCancel">取消</button><button class="btn primary" id="mSave">儲存修改</button>';b.appendChild(row);o.appendChild(b);document.body.appendChild(o);title.focus();title.select();row.querySelector('#mCancel').onclick=()=>{o.remove();resolve(null)};row.querySelector('#mSave').onclick=()=>{const t=title.value.trim();if(!t){toast('請輸入活動名稱');title.focus();return}if(!date.value){toast('請選擇日期');date.focus();return}o.remove();resolve({title:t,date:date.value,category:cat.value})}})}
+async function updateEvent(id,changes){if(!canWrite()){toast('請先登入後再編輯');return}const e=events.find(x=>x.id===id);if(!e)return;const old={...e};const next={...e,...changes};next.title=next.title.trim();next.week=sourceWeekForDate(next.date);Object.assign(e,next);renderAll();const {error}=await supabase.from('schedule_events').update({title:next.title,date:next.date,category:next.category,week:next.week,updated_at:new Date().toISOString()}).eq('project_id',PROJECT_ID).eq('id',id);if(error){Object.assign(e,old);renderAll();setStatus('更新失敗：'+error.message,'err');return}toast('已儲存「'+next.title+'」')}
+async function addEvent(){if(!canWrite()){toast('請先登入後再新增');return}const date=$('addDate').value,title=$('addTitle').value.trim(),category=$('addCategory').value;if(!date||!title){toast(!date?'請選擇日期':'請輸入任務標題');return}const e={id:'c'+Date.now()+Math.floor(Math.random()*1000),date,title,category,week:sourceWeekForDate(date),originalDate:date,sortOrder:events.filter(x=>x.date===date).length};const {data,error}=await supabase.from('schedule_events').insert(toDb(e)).select('id,project_id,date,title,category,week,original_date,sort_order').single();if(error){setStatus('新增失敗：'+error.message,'err');return}events.push(fromDb(data));$('addTitle').value='';renderAll();toast('已新增「'+title+'」')}
+async function deleteEvent(id){if(!canWrite())return;const e=events.find(x=>x.id===id);if(!e)return;if(!confirm('要刪除「'+e.title+'」嗎？'))return;const {error}=await supabase.from('schedule_events').delete().eq('project_id',PROJECT_ID).eq('id',id);if(error){setStatus('刪除失敗：'+error.message,'err');return}events=events.filter(x=>x.id!==id);renderAll();toast('已刪除')}
+function exportData(){const data=JSON.stringify({exportedAt:new Date().toISOString(),source:'Supabase 專案時程',events},null,2);download('schedule-backup.json',data,'application/json')}
+function exportICS(){const pad=n=>String(n).padStart(2,'0'),ds=s=>s.replace(/-/g,''),add=s=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+1);return iso(d)};const now=new Date(),stamp=now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+pad(now.getUTCMinutes())+pad(now.getUTCSeconds())+'Z';const escI=s=>String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');let lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Ember Studio//Project Schedule//ZH-TW','CALSCALE:GREGORIAN'];events.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>lines.push('BEGIN:VEVENT','UID:'+e.id+'-goldenfish@eritung','DTSTAMP:'+stamp,'DTSTART;VALUE=DATE:'+ds(e.date),'DTEND;VALUE=DATE:'+ds(add(e.date)),'SUMMARY:'+escI(e.title),'CATEGORIES:'+escI(e.category),'DESCRIPTION:'+escI(`分類：${e.category}／週次：${e.week}`),'END:VEVENT'));lines.push('END:VCALENDAR');download('project-schedule.ics',lines.join('\r\n'),'text/calendar')}
+function download(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:type+';charset=utf-8'}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
+async function boot(){renderSetup();document.querySelectorAll('.nav-btn[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));$('toggleBtn').onclick=()=>setView(currentView==='calendar'?'list':'calendar');$('mobileViewBtn').onclick=()=>setView(currentView==='calendar'?'list':'calendar');$('prevBtn').onclick=()=>{cursor=new Date(cursor.getFullYear(),cursor.getMonth()-1,1);renderCalendar()};$('nextBtn').onclick=()=>{cursor=new Date(cursor.getFullYear(),cursor.getMonth()+1,1);renderCalendar()};$('todayBtn').onclick=()=>{const n=new Date();cursor=new Date(n.getFullYear(),n.getMonth(),1);renderCalendar()};$('searchInput').oninput=e=>{query=e.target.value;renderAll()};$('loginBtn').onclick=signIn;$('signOutBtn').onclick=signOut;$('addEventBtn').onclick=addEvent;$('exportDataBtn').onclick=exportData;$('exportIcsBtn').onclick=exportICS;document.addEventListener('click',async e=>{const del=e.target.closest('.del');if(del){e.stopPropagation();deleteEvent(del.dataset.id);return}const card=e.target.closest('.event,.list-card');if(card&&canWrite()){const ev=events.find(x=>x.id===card.dataset.id);const res=ev&&await editModal(ev);if(res)updateEvent(ev.id,res)}});supabase.auth.onAuthStateChange(async(_event,s)=>{session=s;await refreshSession()});await refreshSession();await loadEvents();setView('calendar')}
 boot();
 </script>
-</body></html>
+</body>
+</html>
